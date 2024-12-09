@@ -12,7 +12,9 @@
     "lucide-react": "^0.468.0",
     "next": "14.2.16",
     "react": "^18",
-    "react-dom": "^18"
+    "react-dom": "^18",
+    "tailwind-scrollbar-hide": "^1.1.7",
+    "tailwind-variants": "^0.3.0"
   },
   "devDependencies": {
     "@types/node": "^20",
