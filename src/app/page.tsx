@@ -4,6 +4,7 @@ import CardTask from "@/components/ui/CardTask";
 import HorizontalScroller from "@/components/ui/HorizontalScroller";
 import Timer from "@/components/ui/Time";
 import { PlusIcon } from "lucide-react";
+import { getServerSession } from "next-auth";
 
 const Projects = [
   "Aprender Inglês",
@@ -30,14 +31,16 @@ const Tasks = [
   "Testar conhecimentos com quizzes",
 ];
 
-export default function Home() {
+export default async function Home() {
+  const session = await getServerSession()
+
   return (
     <>
       <Header />
       <main className="p-2 xl:px-28 mt-10">
         <h1 className="font-poppins text-4xl sm:text-5xl font-medium text-neutral-800 ">
           Seja Bem Vindo
-          <span className="font-bold text-primary-600 ml-3">MINIFAK !</span>
+          <span className="font-bold text-primary-600 ml-3">{session?.user?.name} !</span>
         </h1>
         <section className="mt-10 sm:mt-8 ml-1">
           <h2 className="font-poppins text-neutral-800 font-semibold text-3xl sm:text-4xl mb-2">
