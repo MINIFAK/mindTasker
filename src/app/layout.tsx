@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import {Inter, Poppins}from "next/font/google";
 import "./globals.css";
 import { Providers } from "./sessionProvider";
+import { Toaster } from "@/components/ui/shadcn/sonner";
 
 const inter = Inter({
   subsets: ['latin'], 
@@ -31,6 +32,7 @@ export default function RootLayout({
       >
         <Providers>
          {children}
+         <Toaster />
         </Providers>
       </body>
     </html>
