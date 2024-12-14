@@ -2,19 +2,9 @@ import { Header } from "@/components/layout/Header";
 import { Projects } from "@/components/layout/Projects";
 import { Tasks } from "@/components/layout/Tasks";
 import { getServerSession } from "next-auth";
+import { log } from "node:console";
 
-const projects = [
-  { id: "1", name: "Aprender Inglês" },
-  { id: "2", name: "Estudar Back-End" },
-  { id: "3", name: "Praticar Front-End" },
-  { id: "4", name: "Melhorar Design" },
-  { id: "5", name: "Dominar React" },
-  { id: "6", name: "Aprofundar em Node.js" },
-  { id: "7", name: "Explorar Cloud Computing" },
-  { id: "8", name: "Entender Banco de Dados" },
-  { id: "9", name: "Desenvolver Portfólio" },
-  { id: "10", name: "Aprimorar Soft Skills" },
-];
+
 const tasks = Array.from({ length: 100 }, (_, index) => ({
   id: (index + 1).toString(),
   name: `Tarefa ${index + 1}`,
@@ -28,10 +18,12 @@ const tasks = Array.from({ length: 100 }, (_, index) => ({
   }).reduce((acc, value)=> acc + value, 0),
 }));
 
+export const getProjects = async() => {
 
+}
 export default async function Home() {
   const session = await getServerSession()
-
+  
   return (
     <>
       <Header />
@@ -41,7 +33,7 @@ export default async function Home() {
           <span className="font-bold text-primary-600 ml-3">{session?.user?.name} !</span>
         </h1>
        
-        <Projects data={projects}/>
+        <Projects/>
         
         <Tasks data={tasks}/>
       </main>
