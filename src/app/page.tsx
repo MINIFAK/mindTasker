@@ -2,7 +2,6 @@ import { Header } from "@/components/layout/Header";
 import { Projects } from "@/components/layout/Projects";
 import { Tasks } from "@/components/layout/Tasks";
 import { getServerSession } from "next-auth";
-import { log } from "node:console";
 
 
 const tasks = Array.from({ length: 100 }, (_, index) => ({
@@ -23,7 +22,7 @@ export const getProjects = async() => {
 }
 export default async function Home() {
   const session = await getServerSession()
-  
+
   return (
     <>
       <Header />
@@ -35,7 +34,8 @@ export default async function Home() {
        
         <Projects/>
         
-        <Tasks data={tasks}/>
+        <Tasks data={tasks}/>     
+        
       </main>
     </>
   );

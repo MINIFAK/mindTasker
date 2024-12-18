@@ -11,6 +11,10 @@ import { CreateTask } from "../ui/CreateTask";
 import { useRouter, useSearchParams } from "next/navigation";
 
 import { toast } from "sonner";
+import {ContextMenu, ContextMenuButton} from "../ui/contextMenu";
+import useContextMenu from "@/hook/useContextMenu";
+import { EditTask } from "../ui/EditTask";
+import { DeleteTask } from "../ui/DeleteTask";
 
 
 
@@ -21,10 +25,14 @@ interface ProjectsDataProps{
 
 
 export function Projects(){
-  const [data, setData] = useState<ProjectsDataProps[]>()
+  const [data, setData] = useState<ProjectsDataProps[]>([])
+  const [openEdit, setOpenEdit] = useState(false)
+  const [openDelete, setOpenDelete] = useState(false)
+
+
+  const { menuRef,handleContextMenu, setVisible,visible,position } = useContextMenu()
   const router = useRouter()
   const searchParams = useSearchParams()
-
 
   useEffect(()=> {
     const getData = async() => {
@@ -53,11 +61,8 @@ export function Projects(){
       params.delete("task")
  
       router.push(`/?${params.toString()}`)
-    },[searchParams])
-
-  const createProject = async (e: FormEvent, name: string) => {
-    e.preventDefault()
-    
+  },[searchParams])
+  const createProject = useCallback( async (name: string) => {    
     fetch("/api/projects", {
       method: 'POST',
       headers: {
@@ -69,14 +74,57 @@ export function Projects(){
     }).then(response =>  response.json())
     .then(data => {  
       toast(data.message ?? "Novo projeto foi criado")
+      if(data.message) return
+      setData((oldData) => [data, ...oldData])
     })
     .catch(error => {
       console.error('Erro ao criar um projeto buscar dados:', error);
     });
-  }
+  }, [setData])
+  const editProject = useCallback(async (name: string) => {
+    const id = searchParams.get('project')
+    fetch(`/api/projects/${id}`, {
+      method: 'PATCH',
+      headers: {
+        "Content-Type": "application/json", 
+      },
+      body: JSON.stringify({
+       name
+      }),
+    }).then(response =>  response.json())
+    .then(project => {  
+      toast(project.message ?? "O nome do projeto foi alterado com sucesso")
+      if(project.message) return
+      const index = data.findIndex((data) => data.id === id) 
+      const oldData = data
+      oldData[index].name = name
+      setData(oldData)
+    })
+    .catch(error => {
+      console.error('Erro ao alterar o nome de um projeto:', error);
+    });
+  },[setData, data])
+  const deleteProject = useCallback(async () => {
+    const id = searchParams.get('project')
+    fetch(`/api/projects/${id}`, {
+      method: 'DELETE',
+    }).then(response =>  response.json())
+    .then(data => {  
+      setData((oldData) => oldData?.filter((project)=> project.id != id))
+      toast(data.message ?? "O projeto foi deletado com sucesso")
+
+      const params = new URLSearchParams(searchParams.toString())
+
+      params.delete("project")
+
+      router.push(`/?${params.toString()}`)
+    })
+    .catch(error => {
+      console.error('Erro ao deletar um projeto:', error);
+    });
+  },[setData,searchParams])
 
 
-  
   return(
     <section className="mt-10 sm:mt-8 ml-1">
       <h2 className="font-poppins text-neutral-800 font-semibold text-3xl sm:text-4xl mb-2">
@@ -101,14 +149,36 @@ export function Projects(){
 
         <HorizontalScroller>
           {data?.map((project, index) => (
-            <CardTask onClick={() => {
-              setProject(project.id)
-            }} 
-            select={searchParams.get('project') === project.id ? true : false}
-            name={project.name} key={index} />
+            <div key={index}>
+               <CardTask 
+                  onContextMenu={(e)=> {
+                    setProject(project.id)
+                    handleContextMenu(e)
+                  }}
+                  onClick={() => {
+                    setProject(project.id)
+                  }} 
+                  select={searchParams.get('project') === project.id ? true : false}
+                  name={project.name} 
+                />
+              
+                <ContextMenu visible={visible} menuRef={menuRef} position={position} >
+                  <ContextMenuButton onClick={() => setOpenEdit(true)}>Alterar Nome</ContextMenuButton>
+                  <ContextMenuButton onClick={() => setOpenDelete(true)}>Deletar Projeto</ContextMenuButton>
+                  <ContextMenuButton onClick={() => setOpenEdit(true)}>Ver Gráfico</ContextMenuButton>
+                </ContextMenu>
+            </div>
           ))}
         </HorizontalScroller>
       </div>
+      <EditTask editTask={editProject} open={openEdit} onOpenChange={setOpenEdit} 
+        title="Alterar nome" 
+        description={`Deseja realmente alterar o nome desse projeto ${data.find((data)=> data.id === searchParams.get('project') )?.name} ?`} 
+      />
+      <DeleteTask open={openDelete} onOpenChange={setOpenDelete} deleteTask={deleteProject} 
+        title="Deletar Projeto" 
+        description={`Deseja realmente deletar esse projeto ${data.find((data)=> data.id === searchParams.get('project') )?.name} ?`} 
+       />
     </section>
   )
 }

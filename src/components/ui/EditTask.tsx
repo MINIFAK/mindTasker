@@ -7,28 +7,25 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/shadcn/dialog"
 import { useRef } from "react";
 
 import Input from "./Input";
 import { Button } from "./Button";
 
-interface CreateTaskProps{
-  children: React.ReactNode;
-  createTask: (name: string) => void;
+interface EditTaskProps{
+  open: boolean;
+  onOpenChange: (open: boolean) => void
+  editTask: (name: string) => void;
   title: string;
   description?: string;
   placeholder?: string
 }
-export function CreateTask({children,title,description,placeholder, createTask}: CreateTaskProps){
+export function EditTask({title,description,placeholder, open, onOpenChange,editTask}: EditTaskProps){
   const name = useRef<HTMLInputElement>(null)
 
   return(
-    <Dialog>
-      <DialogTrigger asChild>
-       {children}
-      </DialogTrigger>
+    <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[512px]">
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
@@ -40,7 +37,8 @@ export function CreateTask({children,title,description,placeholder, createTask}:
               ref={name}
               />
           <DialogFooter>
-            <Button onClick={() => createTask(name.current?.value ?? "")} type="buttonSubmit">Criar Projeto</Button>
+            <Button onClick={()=> onOpenChange(false)} variant="outline" type="button">Cancelar</Button>
+            <Button onClick={()=> editTask(name.current?.value ?? "")} type="button">Alterar Nome</Button>
           </DialogFooter>
       </DialogContent>
     </Dialog>
