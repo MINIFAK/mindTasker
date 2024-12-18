@@ -1,6 +1,6 @@
 "use client"
 import { cn } from "@/lib/utils";
-import React, { useState, useRef, useEffect, RefObject } from "react";
+import React, { useState, useRef, useEffect, RefObject, ButtonHTMLAttributes } from "react";
 
 interface ContextMenuProps {
   children: React.ReactNode
@@ -30,4 +30,19 @@ const ContextMenu = ({ children, visible, position, menuRef,className }: Context
   )
 };
 
-export default ContextMenu;
+interface ContextMenuButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+  children: React.ReactNode
+  className?: string
+}
+const ContextMenuButton = ({ children, className, ...props }: ContextMenuButtonProps) => {
+  return (
+    <button
+      className={cn(" hover:bg-primary-500", className)}
+      {...props}
+     >
+    {children}
+  </button>
+  )
+};
+
+export {ContextMenu, ContextMenuButton };
