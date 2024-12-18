@@ -1,66 +1,20 @@
+
 import { db } from '@/services/FirebaseConnection';
-import { addDoc, collection, getDocs, query, where } from 'firebase/firestore';
+import { deleteDoc, doc, updateDoc } from 'firebase/firestore';
 import { getServerSession } from 'next-auth';
 import { NextRequest, NextResponse } from 'next/server'
 
-
-export async function GET(req: NextRequest){
-  try{
-    const session = await getServerSession();
-    
-    if (!session || !session.user?.email) {
-      throw new Error("Você precisa estar autenticado para acessar esses dados.")
-    }
-    
-    const projects: {id: string; name: string}[] = []
-    
-    const q = query(collection(db, "projects"), where("email", "==", session.user?.email));
-
-    await getDocs(q).then((querySnapshot)=> {
-      querySnapshot.forEach((doc) => {        
-        projects.push({
-          id: doc.id,
-          name: doc.data().name
-        })
-      });
-    })
-    
-    const response = NextResponse.json(projects);
-  
-    return response;
-  } catch (error) {
-    if(error instanceof Error){
-      return NextResponse.json(
-        { message: error.message },
-        { status: 500 }
-      );
-    }
-    return NextResponse.json(
-      { message: "Houve um erro ao tentar ver todos os projetos" },
-      { status: 500 }
-    );
-  }
-}
-
-export async function POST(req: NextRequest){
+export async function DELETE(req: NextRequest, { params }: { params: { id: string } }){
   try {
     const session = await getServerSession();
     
     if (!session || !session.user?.email) {
       throw new Error("Você precisa estar autenticado para acessar esses dados.")
     }
-    const { name } = await req.json();
 
-    if(!name){
-      throw new Error("Necessario enviar o nome do projeto")
-    }
-    
-    const docRef = await addDoc(collection(db, "projects"), {
-      email: session.user.email,
-      name: name
-    })
+    await deleteDoc(doc(db, "projects", params.id))
 
-  return NextResponse.json({ id:docRef.id, name: name })
+    return NextResponse.json({ id: params.id })
   } catch (error) {
     if(error instanceof Error){
       return NextResponse.json(
@@ -69,7 +23,39 @@ export async function POST(req: NextRequest){
       );
     }
     return NextResponse.json(
-      { message: "Houve um erro ao tentar criar um novo projeto" },
+      { message: "Houve um erro ao tentar deletar um novo projeto" },
+      { status: 500 }
+    );
+  }
+}
+
+export async function PATCH(req: NextRequest, { params }: { params: { id: string } }){
+  try {
+    const session = await getServerSession();
+    
+    if (!session || !session.user?.email) {
+      throw new Error("Você precisa estar autenticado para acessar esses dados.")
+    }
+
+    const { name } = await req.json();
+
+    if(!name){
+      throw new Error("Necessario enviar o nome do projeto")
+    } 
+   await updateDoc(doc(db, "projects", params.id), {
+      name,
+    })
+
+  return NextResponse.json({ id: params.id, name: name })
+  } catch (error) {
+    if(error instanceof Error){
+      return NextResponse.json(
+        { message: error.message },
+        { status: 500 }
+      );
+    }
+    return NextResponse.json(
+      { message: "Houve um erro ao tentar atualizar o nome do projeto" },
       { status: 500 }
     );
   }
