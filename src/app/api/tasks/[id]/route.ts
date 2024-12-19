@@ -12,7 +12,7 @@ export async function DELETE(req: NextRequest, { params }: { params: { id: strin
       throw new Error("Você precisa estar autenticado para acessar esses dados.")
     }
 
-    await deleteDoc(doc(db, "projects", params.id))
+    await deleteDoc(doc(db, "tasks", params.id))
 
     return NextResponse.json({ id: params.id })
   } catch (error) {
@@ -23,7 +23,7 @@ export async function DELETE(req: NextRequest, { params }: { params: { id: strin
       );
     }
     return NextResponse.json(
-      { message: "Houve um erro ao tentar deletar um projeto" },
+      { message: "Houve um erro ao tentar deletar uma tarefa" },
       { status: 500 }
     );
   }
@@ -40,9 +40,9 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
     const { name } = await req.json();
 
     if(!name){
-      throw new Error("Necessario enviar o nome do projeto")
+      throw new Error("Necessario enviar o nome da tarefa")
     } 
-   await updateDoc(doc(db, "projects", params.id), {
+   await updateDoc(doc(db, "tasks", params.id), {
       name,
     })
 
@@ -55,7 +55,7 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
       );
     }
     return NextResponse.json(
-      { message: "Houve um erro ao tentar atualizar o nome do projeto" },
+      { message: "Houve um erro ao tentar atualizar o nome da tarefa" },
       { status: 500 }
     );
   }
