@@ -172,7 +172,6 @@ export function Tasks(){
               <ContextMenu visible={visible} menuRef={menuRef} position={position} >
                 <ContextMenuButton onClick={() => setOpenEdit(true)}>Alterar Nome</ContextMenuButton>
                 <ContextMenuButton onClick={() => setOpenDelete(true)}>Deletar Projeto</ContextMenuButton>
-                <ContextMenuButton onClick={() => setOpenEdit(true)}>Ver Gráfico</ContextMenuButton>
               </ContextMenu>
             </div>
             )
