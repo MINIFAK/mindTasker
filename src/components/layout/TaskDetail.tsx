@@ -1,6 +1,6 @@
 "use client"
 
-import { convertMinutesToHours } from "@/util/convertDate";
+import { convertMinutesInHour, convertMinutesToHours } from "@/util/convertDate";
 import { Button } from "../ui/Button";
 import Timer from "../ui/Time";
 import { TasksDataProps } from "./Tasks";
@@ -9,7 +9,6 @@ export function TaskDetail({
   task
 }: {task: TasksDataProps | undefined}){
   if(!task) return <></>
-  console.log(task);
   
   return(
     <section className="mt-8 ml-10 mr-5 sm:flex sm:justify-between">
@@ -30,24 +29,9 @@ export function TaskDetail({
         </div>
 
         <div className="px-1 font inter text-lg">
-          <p>
-            Hoje, o total de foco na tarefa foi de{" "}
-            <strong className="text-primary-500 font-bold">
-              {convertMinutesToHours(task.today)}
-            </strong>
-          </p>
-          <p>
-            Nesta semana, o total de foco na tarefa foi de{" "}
-            <strong className="text-primary-500 font-bold">
-            {convertMinutesToHours(task.week)}
-            </strong>
-          </p>
-          <p>
-            Neste mês, o total de foco na tarefa foi de{" "}
-            <strong className="text-primary-500 font-bold">
-            {convertMinutesToHours(task.month)}
-            </strong>
-          </p>
+          <p>Hoje, o total de foco na tarefa foi de <strong className="text-primary-500 font-bold">{convertMinutesToHours(task.today)}</strong></p>
+          <p>Nesta semana, o total de foco na tarefa foi de <strong className="text-primary-500 font-bold">{convertMinutesToHours(task.week.reduce((acc, n) => acc + n, 0))}</strong></p>
+          <p>Neste mês, o total de foco na tarefa foi de <strong className="text-primary-500 font-bold">{convertMinutesToHours(task.month.reduce((acc, n) => acc + n, 0))}</strong></p>
         </div>
       </div>
     </div>
@@ -56,13 +40,11 @@ export function TaskDetail({
         Conquiste o Foco
       </h2>
       <p className="mb-4">
-        Desmotre e conquiste o foco nessa tarefa com um total de
-        <strong className="text-primary-500"> 100 </strong>
-        horas
+        Desmotre e conquiste o foco nessa tarefa com um total de<strong className="text-primary-500"> 100 </strong>horas
       </p>
       <div className="flex items-center justify-center">
-        <Timer current={50} max={100}>
-          <p className="font-inter text-5xl font-semibold">50</p>
+        <Timer current={task.year.reduce((acc, n) => acc + n, 0)} max={100}>
+          <p className="font-inter text-5xl font-semibold">{convertMinutesInHour(task.year.reduce((acc, n) => acc + n, 0))}</p>
         </Timer>
       </div>
     </div>

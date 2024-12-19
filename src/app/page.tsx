@@ -4,22 +4,6 @@ import { Tasks } from "@/components/layout/Tasks";
 import { getServerSession } from "next-auth";
 
 
-const tasks = Array.from({ length: 100 }, (_, index) => ({
-  id: (index + 1).toString(),
-  name: `Tarefa ${index + 1}`,
-  projectId: `${Math.floor(Math.random() * 10) + 1}` ,
-  today: Math.floor(Math.random() * 1440) + 1,
-  week: Array.from({length: 7}, (_, index) => {
-    return Math.floor(Math.random() * 1440) + 1
-  }).reduce((acc, value)=> acc + value, 0),
-  month: Array.from({length: 30}, (_, index) => {
-    return Math.floor(Math.random() * 1440) + 1
-  }).reduce((acc, value)=> acc + value, 0),
-}));
-
-export const getProjects = async() => {
-
-}
 export default async function Home() {
   const session = await getServerSession()
 
@@ -34,7 +18,7 @@ export default async function Home() {
        
         <Projects/>
         
-        <Tasks data={tasks}/>     
+        <Tasks/>     
         
       </main>
     </>

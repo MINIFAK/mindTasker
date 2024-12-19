@@ -4,3 +4,8 @@ export function convertMinutesToHours(minutos: number) {
 
   return `${horas} horas e ${minutosRestantes} minutos`;
 }
+export function convertMinutesInHour(minutos: number) {
+  const horas = Math.floor(minutos / 60); // Divide e arredonda para baixo
+
+  return horas;
+}
