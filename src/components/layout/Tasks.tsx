@@ -10,12 +10,12 @@ import CardTask from "../ui/CardTask";
 
 import { useRouter, useSearchParams } from "next/navigation";
 import { TaskDetail } from "./TaskDetail";
-import { CreateTask } from "../ui/CreateTask";
+import { CreateTask } from "../ui/task/CreateTask";
 import useContextMenu from "@/hook/useContextMenu";
 import { toast } from "sonner";
 import { ContextMenu, ContextMenuButton } from "../ui/contextMenu";
-import { EditTask } from "../ui/EditTask";
-import { DeleteTask } from "../ui/DeleteTask";
+import { EditTask } from "../ui/task/EditTask";
+import { DeleteTask } from "../ui/task/DeleteTask";
 
 export interface TasksDataProps{
   projectId: string

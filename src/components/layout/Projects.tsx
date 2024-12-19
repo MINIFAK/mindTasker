@@ -6,15 +6,15 @@ import { FormEvent, useCallback, useEffect, useState } from "react";
 import { Button } from "../ui/Button";
 import HorizontalScroller from "../ui/HorizontalScroller";
 import CardTask from "../ui/CardTask";
-import { CreateTask } from "../ui/CreateTask";
+import { CreateTask } from "../ui/task/CreateTask";
 
 import { useRouter, useSearchParams } from "next/navigation";
 
 import { toast } from "sonner";
 import {ContextMenu, ContextMenuButton} from "../ui/contextMenu";
 import useContextMenu from "@/hook/useContextMenu";
-import { EditTask } from "../ui/EditTask";
-import { DeleteTask } from "../ui/DeleteTask";
+import { EditTask } from "../ui/task/EditTask";
+import { DeleteTask } from "../ui/task/DeleteTask";
 interface ProjectsDataProps{
   id: string
   name: string

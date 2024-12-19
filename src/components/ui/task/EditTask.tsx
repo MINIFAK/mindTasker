@@ -10,8 +10,8 @@ import {
 } from "@/components/ui/shadcn/dialog"
 import { useRef } from "react";
 
-import Input from "./Input";
-import { Button } from "./Button";
+import Input from "../Input";
+import { Button } from "../Button";
 
 interface EditTaskProps{
   open: boolean;
