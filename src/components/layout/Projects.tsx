@@ -15,14 +15,10 @@ import {ContextMenu, ContextMenuButton} from "../ui/contextMenu";
 import useContextMenu from "@/hook/useContextMenu";
 import { EditTask } from "../ui/EditTask";
 import { DeleteTask } from "../ui/DeleteTask";
-
-
-
 interface ProjectsDataProps{
   id: string
   name: string
 }
-
 
 export function Projects(){
   const [data, setData] = useState<ProjectsDataProps[]>([])
@@ -33,6 +29,8 @@ export function Projects(){
   const { menuRef,handleContextMenu, setVisible,visible,position } = useContextMenu()
   const router = useRouter()
   const searchParams = useSearchParams()
+
+  const currentProject  = searchParams.get('project')
 
   useEffect(()=> {
     const getData = async() => {
@@ -46,7 +44,7 @@ export function Projects(){
       }).then((res) => res.json()).then((data)=> {
         return data.message ? [] : data
       }).catch(error => {
-        console.error('[getProjects]: Erro ao criar um projeto buscar dados:', error);
+        console.error('Erro ao buscar dados dos projetos:', error);
         return []
       }))
     }
@@ -73,17 +71,16 @@ export function Projects(){
       }),
     }).then(response =>  response.json())
     .then(data => {  
-      toast(data.message ?? "Novo projeto foi criado")
+      toast(data.message ?? "O projeto foi criado com sucesso")
       if(data.message) return
       setData((oldData) => [data, ...oldData])
     })
     .catch(error => {
-      console.error('Erro ao criar um projeto buscar dados:', error);
+      console.error('Erro ao criar um projeto:', error);
     });
   }, [setData])
   const editProject = useCallback(async (name: string) => {
-    const id = searchParams.get('project')
-    fetch(`/api/projects/${id}`, {
+    fetch(`/api/projects/${currentProject}`, {
       method: 'PATCH',
       headers: {
         "Content-Type": "application/json", 
@@ -95,7 +92,7 @@ export function Projects(){
     .then(project => {  
       toast(project.message ?? "O nome do projeto foi alterado com sucesso")
       if(project.message) return
-      const index = data.findIndex((data) => data.id === id) 
+      const index = data.findIndex((data) => data.id === currentProject) 
       const oldData = data
       oldData[index].name = name
       setData(oldData)
@@ -103,15 +100,16 @@ export function Projects(){
     .catch(error => {
       console.error('Erro ao alterar o nome de um projeto:', error);
     });
-  },[setData, data])
+  },[setData, data, currentProject])
   const deleteProject = useCallback(async () => {
-    const id = searchParams.get('project')
-    fetch(`/api/projects/${id}`, {
+    fetch(`/api/projects/${currentProject}`, {
       method: 'DELETE',
     }).then(response =>  response.json())
-    .then(data => {  
-      setData((oldData) => oldData?.filter((project)=> project.id != id))
-      toast(data.message ?? "O projeto foi deletado com sucesso")
+    .then(project => {  
+      toast(project.message ?? "O projeto foi deletado com sucesso")
+      if(project.message) return
+
+      setData((oldData) => oldData?.filter((project)=> project.id != currentProject))
 
       const params = new URLSearchParams(searchParams.toString())
 
@@ -122,8 +120,7 @@ export function Projects(){
     .catch(error => {
       console.error('Erro ao deletar um projeto:', error);
     });
-  },[setData,searchParams])
-
+  },[setData, searchParams, currentProject])
 
   return(
     <section className="mt-10 sm:mt-8 ml-1">
@@ -158,14 +155,13 @@ export function Projects(){
                   onClick={() => {
                     setProject(project.id)
                   }} 
-                  select={searchParams.get('project') === project.id ? true : false}
+                  select={currentProject === project.id ? true : false}
                   name={project.name} 
                 />
               
                 <ContextMenu visible={visible} menuRef={menuRef} position={position} >
                   <ContextMenuButton onClick={() => setOpenEdit(true)}>Alterar Nome</ContextMenuButton>
                   <ContextMenuButton onClick={() => setOpenDelete(true)}>Deletar Projeto</ContextMenuButton>
-                  <ContextMenuButton onClick={() => setOpenEdit(true)}>Ver Gráfico</ContextMenuButton>
                 </ContextMenu>
             </div>
           ))}
@@ -173,11 +169,11 @@ export function Projects(){
       </div>
       <EditTask editTask={editProject} open={openEdit} onOpenChange={setOpenEdit} 
         title="Alterar nome" 
-        description={`Deseja realmente alterar o nome desse projeto ${data.find((data)=> data.id === searchParams.get('project') )?.name} ?`} 
+        description={`Deseja realmente alterar o nome desse projeto ${data.find((data)=> data.id === currentProject )?.name} ?`} 
       />
       <DeleteTask open={openDelete} onOpenChange={setOpenDelete} deleteTask={deleteProject} 
         title="Deletar Projeto" 
-        description={`Deseja realmente deletar esse projeto ${data.find((data)=> data.id === searchParams.get('project') )?.name} ?`} 
+        description={`Deseja realmente deletar esse projeto ${data.find((data)=> data.id === currentProject )?.name} ?`} 
        />
     </section>
   )
