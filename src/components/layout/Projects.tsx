@@ -26,7 +26,7 @@ export function Projects(){
   const [openDelete, setOpenDelete] = useState(false)
 
 
-  const { menuRef,handleContextMenu, setVisible,visible,position } = useContextMenu()
+  const { menuRef,handleContextMenu,visible,position } = useContextMenu()
   const router = useRouter()
   const searchParams = useSearchParams()
 
@@ -52,6 +52,8 @@ export function Projects(){
   }, [])
 
   const setProject = useCallback((id: string) => {
+      if(currentProject === id) return
+      
       const params = new URLSearchParams(searchParams.toString())
 
       params.set("project", id)
@@ -96,6 +98,7 @@ export function Projects(){
       const oldData = data
       oldData[index].name = name
       setData(oldData)
+      setOpenEdit(false)
     })
     .catch(error => {
       console.error('Erro ao alterar o nome de um projeto:', error);
