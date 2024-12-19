@@ -26,6 +26,7 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
           today: doc.data().today,
           week: doc.data().week,
           month: doc.data().month,
+          year: doc.data().year,
         })
       });
     })

@@ -7,9 +7,10 @@ export type TasksProps = {
   id: string;
   name: string;
   projectId: string;
-  today: string;
-  week: string;
-  month: string;
+  today: number;
+  week: number;
+  month: number;
+  year: number;
 }
 
 export async function GET(req: NextRequest){
@@ -33,6 +34,7 @@ export async function GET(req: NextRequest){
           today: doc.data().today,
           week: doc.data().week,
           month: doc.data().month,
+          year: doc.data().year,
         })
       });
     })
@@ -83,6 +85,7 @@ export async function POST(req: NextRequest){
      today: 0,
      week:[0,0,0,0,0,0,0],
      month:[0,0,0,0],
+     year: [0,0,0,0,0,0,0,0,0,0,0,0]
     })
   } catch (error) {
     if(error instanceof Error){

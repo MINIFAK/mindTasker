@@ -22,8 +22,9 @@ export interface TasksDataProps{
   id: string
   name: string
   today: number
-  week: number
-  month: number
+  week: number[]
+  month: number[]
+  year: number[]
 }
 
 export function Tasks(){
