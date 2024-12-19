@@ -42,7 +42,7 @@ export function Tasks(){
 
    useEffect(()=> {
     const getData = async() => {
-        setData(await fetch(`${process.env.NEXT_PUBLIC_BASE_URL_API}/api/tasks/${currentProject}`, {
+        setData(await fetch(`${process.env.NEXT_PUBLIC_BASE_URL_API}/api/tasks/projects/${currentProject}`, {
           method: "GET",
           headers: {
             'Content-Type': 'application/json',

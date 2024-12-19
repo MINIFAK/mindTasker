@@ -1,6 +1,6 @@
 
 import { db } from '@/services/FirebaseConnection';
-import { collection, deleteDoc, doc, getDocs, query, updateDoc, where } from 'firebase/firestore';
+import { collection, deleteDoc, doc, getDoc, getDocs, query, updateDoc, where } from 'firebase/firestore';
 import { getServerSession } from 'next-auth';
 import { NextRequest, NextResponse } from 'next/server'
 import { TasksProps } from '../route';
@@ -15,20 +15,20 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
     
     const tasks: TasksProps[] = []
     
-    const q = query(collection(db, "tasks"), where("email", "==", session.user?.email), where("projectId", "==", params.id));
+    const docRef = await getDoc(doc(db, "tasks", params.id))
 
-    await getDocs(q).then((querySnapshot)=> {
-      querySnapshot.forEach((doc) => {        
-        tasks.push({
-          id: doc.id,
-          name: doc.data().name,
-          projectId: doc.data().projectId,
-          today: doc.data().today,
-          week: doc.data().week,
-          month: doc.data().month,
-          year: doc.data().year,
-        })
-      });
+    if(!docRef || docRef.data()?.email !== session.user.email){
+     throw new Error("Esse tarefa não foi encontrada")
+    }
+  
+    tasks.push({
+      id: docRef.id,
+      name: docRef.data()?.name,
+      projectId: docRef.data()?.projectId,
+      today: docRef.data()?.today,
+      week: docRef.data()?.week,
+      month: docRef.data()?.month,
+      year: docRef.data()?.year,
     })
     
     return NextResponse.json(tasks);
@@ -40,7 +40,7 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
       );
     }
     return NextResponse.json(
-      { message: "Houve um erro ao tentar ver todas as tarefas" },
+      { message: "Houve um erro ao tentar ver uma tarefa" },
       { status: 500 }
     );
   }

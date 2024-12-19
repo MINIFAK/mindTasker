@@ -78,6 +78,7 @@ export async function POST(req: NextRequest){
       today: 0,
       week:[0,0,0,0,0,0,0],
       month:[0,0,0,0],
+      year: [0,0,0,0,0,0,0,0,0,0,0,0]
     })
   return NextResponse.json({ 
      id:docRef.id,
