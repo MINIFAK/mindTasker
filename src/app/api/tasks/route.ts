@@ -3,7 +3,7 @@ import { addDoc, collection, getDocs, query, where } from 'firebase/firestore';
 import { getServerSession } from 'next-auth';
 import { NextRequest, NextResponse } from 'next/server'
 
-type TasksProps = {
+export type TasksProps = {
   id: string;
   name: string;
   projectId: string;
