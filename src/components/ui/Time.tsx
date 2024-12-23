@@ -55,7 +55,7 @@ const Timer: React.FC<TimerProps> = ({
           }}
         />
       </svg>
-      <div className="absolute text-black font-bold">{children}</div>
+      <div className="absolute text-black">{children}</div>
     </div>
   );
 };
