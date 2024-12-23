@@ -12,16 +12,14 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
     if (!session || !session.user?.email) {
       throw new Error("Você precisa estar autenticado para acessar esses dados.")
     }
-    
-    const tasks: TasksProps[] = []
-    
+        
     const docRef = await getDoc(doc(db, "tasks", params.id))
 
     if(!docRef || docRef.data()?.email !== session.user.email){
      throw new Error("Esse tarefa não foi encontrada")
     }
   
-    tasks.push({
+    return NextResponse.json({
       id: docRef.id,
       name: docRef.data()?.name,
       projectId: docRef.data()?.projectId,
@@ -29,9 +27,8 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
       week: docRef.data()?.week,
       month: docRef.data()?.month,
       year: docRef.data()?.year,
-    })
-    
-    return NextResponse.json(tasks);
+    });
+
     } catch (error) {
     if(error instanceof Error){
       return NextResponse.json(
