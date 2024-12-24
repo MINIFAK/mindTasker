@@ -52,7 +52,6 @@ export function Tasks(){
       getData()
     }, [currentProject])
   
-  if (!currentProject) return null;
 
   const setTask = useCallback((id: string) => {
     const params = new URLSearchParams(searchParams.toString())
@@ -126,6 +125,9 @@ export function Tasks(){
     });
   },[setData, searchParams, currentTask])
 
+
+  if (!currentProject) return null;
+  
   return(
    <>
     <section className="mt-8 ml-5">
