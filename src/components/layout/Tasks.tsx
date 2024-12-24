@@ -16,23 +16,14 @@ import { toast } from "sonner";
 import { ContextMenu, ContextMenuButton } from "../ui/contextMenu";
 import { EditTask } from "../ui/task/EditTask";
 import { DeleteTask } from "../ui/task/DeleteTask";
+import { Task } from "@/shader/entities/tasks";
 
-export interface TasksDataProps{
-  projectId: string
-  id: string
-  name: string
-  today: number
-  week: number[]
-  month: number[]
-  year: number[]
-}
 
 export function Tasks(){
-  const [data, setData] = useState<TasksDataProps[]>([])
+  const [data, setData] = useState<Task[]>([])
   const [openEdit, setOpenEdit] = useState(false)
   const [openDelete, setOpenDelete] = useState(false)
-
-
+  
   const { menuRef,handleContextMenu, visible,position } = useContextMenu()
   const router = useRouter()
   const searchParams = useSearchParams()
@@ -42,7 +33,7 @@ export function Tasks(){
 
    useEffect(()=> {
     const getData = async() => {
-        setData(await fetch(`${process.env.NEXT_PUBLIC_BASE_URL_API}/api/tasks/projects/${currentProject}`, {
+        setData(await fetch(`${process.env.NEXT_PUBLIC_BASE_URL_API}/api/projects/${currentProject}/tasks`, {
           method: "GET",
           headers: {
             'Content-Type': 'application/json',

@@ -3,13 +3,18 @@
 import { convertMinutesInHour, convertMinutesToHours } from "@/util/convertDate";
 import { Button } from "../ui/Button";
 import Timer from "../ui/Time";
-import { TasksDataProps } from "./Tasks";
+import { useSearchParams } from "next/navigation";
+import { Task } from "@/shader/entities/tasks";
 
 export function TaskDetail({
   task
-}: {task: TasksDataProps | undefined}){
+}: {task: Task | undefined}){
+  
   if(!task) return <></>
   
+  const searchParams = useSearchParams()
+  const params = new URLSearchParams(searchParams.toString())
+
   return(
     <section className="mt-8 ml-10 mr-5 sm:flex sm:justify-between">
     <div>
@@ -22,15 +27,15 @@ export function TaskDetail({
         </h3>
 
         <div className="flex gap-3 my-5">
-          <Button type="button"> Iniciar Cronometro</Button>
+          <Button type="link" href={`/cronometro?${params.toString()}`}> Iniciar Cronometro</Button>
           <Button type="button" variant="text">
             Ver gráfico
           </Button>
         </div>
 
         <div className="px-1 font inter text-lg">
-          <p>Hoje, o total de foco na tarefa foi de <strong className="text-primary-500 font-bold">{convertMinutesToHours(task.today)}</strong></p>
-          <p>Nesta semana, o total de foco na tarefa foi de <strong className="text-primary-500 font-bold">{convertMinutesToHours(task.week.reduce((acc, n) => acc + n, 0))}</strong></p>
+          <p>Hoje, o total de foco na tarefa foi de <strong className="text-primary-500 font-bold">{convertMinutesToHours(task.month[new Date().getDate()] ?? 0)}</strong></p>
+          <p>Nesta semana, o total de foco na tarefa foi de <strong className="text-primary-500 font-bold">{convertMinutesToHours(task.month.slice(0, 7).reduce((acc, n) => acc + n, 0))}</strong></p>
           <p>Neste mês, o total de foco na tarefa foi de <strong className="text-primary-500 font-bold">{convertMinutesToHours(task.month.reduce((acc, n) => acc + n, 0))}</strong></p>
         </div>
       </div>
@@ -43,8 +48,8 @@ export function TaskDetail({
         Desmotre e conquiste o foco nessa tarefa com um total de<strong className="text-primary-500"> 100 </strong>horas
       </p>
       <div className="flex items-center justify-center">
-        <Timer current={task.year.reduce((acc, n) => acc + n, 0)} max={100}>
-          <p className="font-inter text-5xl font-semibold">{convertMinutesInHour(task.year.reduce((acc, n) => acc + n, 0))}</p>
+        <Timer current={task.year?.reduce((acc, n) => acc + n, 0)} max={6000}>
+          <p className="font-inter text-5xl font-semibold">{convertMinutesInHour(task.year?.reduce((acc, n) => acc + n, 0))}</p>
         </Timer>
       </div>
     </div>
