@@ -31,8 +31,10 @@ export function Tasks(){
   const currentProject  = searchParams.get('project')
   const currentTask  = searchParams.get('task')
 
+
    useEffect(()=> {
     const getData = async() => {
+      if(!currentProject) return
         setData(await fetch(`${process.env.NEXT_PUBLIC_BASE_URL_API}/api/projects/${currentProject}/tasks`, {
           method: "GET",
           headers: {
@@ -50,6 +52,8 @@ export function Tasks(){
       getData()
     }, [currentProject])
   
+  if (!currentProject) return null;
+
   const setTask = useCallback((id: string) => {
     const params = new URLSearchParams(searchParams.toString())
 

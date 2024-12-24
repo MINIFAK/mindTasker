@@ -4,6 +4,7 @@ import Clock from "../ui/Clock";
 import { Button } from "../ui/Button";
 import {  signOut, useSession } from "next-auth/react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuPortal, DropdownMenuSeparator, DropdownMenuTrigger } from "../ui/shadcn/dropdown-menu";
+import Link from "next/link";
 
 export const Header = () => {
   const { data: session} = useSession()
@@ -11,12 +12,14 @@ export const Header = () => {
   return (
     <header className="p-2 sm:p-6 flex justify-between">
       <div className="relative w-48 sm:w-60 h-11">
-        <Image
-          src="/MindTaskerLight.svg"
-          alt="Logo do MindTasker"
-          priority
-          fill
-        />
+        <Link href="/">
+          <Image
+            src="/MindTaskerLight.svg"
+            alt="Logo do MindTasker"
+            priority
+            fill
+          />
+        </Link>
       </div>
       <div className="flex gap-4 sm:gap-12 items-center justify-center">
         <Clock />
