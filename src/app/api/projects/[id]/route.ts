@@ -8,10 +8,8 @@ export async function DELETE(req: NextRequest, { params }: { params: { id: strin
   try {
     const session = await getServerSession();
     
-    if (!session || !session.user?.email) {
-      throw new Error("Você precisa estar autenticado para acessar esses dados.")
-    }
-
+    if (!session || !session.user?.email) throw new Error("Você precisa estar autenticado para acessar esses dados.")
+    
     await deleteDoc(doc(db, "projects", params.id))
 
     return NextResponse.json({ id: params.id })
@@ -33,20 +31,17 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
   try {
     const session = await getServerSession();
     
-    if (!session || !session.user?.email) {
-      throw new Error("Você precisa estar autenticado para acessar esses dados.")
-    }
-
+    if (!session || !session.user?.email) throw new Error("Você precisa estar autenticado para acessar esses dados.")
+    
     const { name } = await req.json();
 
-    if(!name){
-      throw new Error("Necessario enviar o nome do projeto")
-    } 
-   await updateDoc(doc(db, "projects", params.id), {
+    if(!name) throw new Error("Necessario enviar o nome do projeto")
+    
+    await updateDoc(doc(db, "projects", params.id), {
       name,
     })
 
-  return NextResponse.json({ id: params.id, name: name })
+    return NextResponse.json({ id: params.id, name: name })
   } catch (error) {
     if(error instanceof Error){
       return NextResponse.json(
