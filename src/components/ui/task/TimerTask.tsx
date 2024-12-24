@@ -7,7 +7,7 @@ import { useSearchParams } from "next/navigation";
 import { Button } from "../Button";
 
 export function StopWatchTask(){
-  const [name, setName] = useState("")
+  const [name, setName] = useState("...")
   const [status, setStatus] = useState<'Stopped' |'Running'|'Paused'>("Stopped")
   const [timer, setTimer] = useState(60)
   const [lastTimeSaved, setLastTimeSaved] = useState(timer)
