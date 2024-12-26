@@ -1,6 +1,6 @@
 import { Header } from "@/components/layout/Header";
-import { Projects } from "@/components/layout/Projects";
-import { Tasks } from "@/components/layout/Tasks";
+import { Projects } from "@/app/(privada)/_components/task/Projects";
+import { Tasks } from "@/app/(privada)/_components/task/Tasks";
 import { getServerSession } from "next-auth";
 
 

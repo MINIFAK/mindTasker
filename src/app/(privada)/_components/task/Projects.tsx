@@ -1,20 +1,22 @@
 'use client'
 
+import { useRouter, useSearchParams } from "next/navigation";
+
 import { PlusIcon } from "lucide-react";
 import { FormEvent, useCallback, useEffect, useState } from "react";
 
-import { Button } from "../ui/Button";
-import HorizontalScroller from "../ui/HorizontalScroller";
-import CardTask from "../ui/CardTask";
-import { CreateTask } from "../ui/task/CreateTask";
-
-import { useRouter, useSearchParams } from "next/navigation";
-
 import { toast } from "sonner";
-import {ContextMenu, ContextMenuButton} from "../ui/contextMenu";
+import {ContextMenu, ContextMenuButton} from "../../../../components/ui/contextMenu";
 import useContextMenu from "@/hook/useContextMenu";
-import { EditTask } from "../ui/task/EditTask";
-import { DeleteTask } from "../ui/task/DeleteTask";
+
+import { Button } from "../../../../components/ui/Button";
+import HorizontalScroller from "../../../../components/ui/HorizontalScroller";
+import CardTask from "../../../../components/ui/CardTask";
+
+import { CreateTask } from "./CreateTask";
+import { EditTask } from "./EditTask";
+import { DeleteTask } from "./DeleteTask";
+
 interface ProjectsDataProps{
   id: string
   name: string

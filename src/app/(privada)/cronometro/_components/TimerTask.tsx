@@ -1,10 +1,12 @@
 "use client"
 
 import { ChevronDown, ChevronUp } from "lucide-react";
-import Timer from "../Time";
 import { useEffect, useRef, useState } from "react";
+
 import { useSearchParams } from "next/navigation";
-import { Button } from "../Button";
+
+import { Button } from "@/components/ui/Button";
+import Timer from "@/components/ui/Time";
 
 export function StopWatchTask(){
   const [name, setName] = useState("...")
@@ -49,7 +51,6 @@ export function StopWatchTask(){
     getData()
     getTime()
   }, [])
-
   
   useEffect(() => {
     if (status === "Running" && !intervalRef.current) {

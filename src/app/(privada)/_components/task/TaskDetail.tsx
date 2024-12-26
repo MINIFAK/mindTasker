@@ -1,10 +1,13 @@
 "use client"
 
-import { convertMinutesInHour, convertMinutesToHours } from "@/util/convertDate";
-import { Button } from "../ui/Button";
-import Timer from "../ui/Time";
+
 import { useSearchParams } from "next/navigation";
+
 import { Task } from "@/shader/entities/tasks";
+import { convertMinutesInHour, convertMinutesToHours } from "@/util/convertDate";
+
+import { Button } from "../../../../components/ui/Button";
+import Timer from "../../../../components/ui/Time";
 
 export function TaskDetail({
   task

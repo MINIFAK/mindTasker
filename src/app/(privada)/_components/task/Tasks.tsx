@@ -1,23 +1,24 @@
 'use client'
 
+import { useRouter, useSearchParams } from "next/navigation";
+
 import { PlusIcon } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 
-
-import { Button } from "../ui/Button";
-import HorizontalScroller from "../ui/HorizontalScroller";
-import CardTask from "../ui/CardTask";
-
-import { useRouter, useSearchParams } from "next/navigation";
+import { Button } from "../../../../components/ui/Button";
+import HorizontalScroller from "../../../../components/ui/HorizontalScroller";
+import CardTask from "../../../../components/ui/CardTask";
+import { ContextMenu, ContextMenuButton } from "../../../../components/ui/contextMenu";
 import { TaskDetail } from "./TaskDetail";
-import { CreateTask } from "../ui/task/CreateTask";
-import useContextMenu from "@/hook/useContextMenu";
-import { toast } from "sonner";
-import { ContextMenu, ContextMenuButton } from "../ui/contextMenu";
-import { EditTask } from "../ui/task/EditTask";
-import { DeleteTask } from "../ui/task/DeleteTask";
-import { Task } from "@/shader/entities/tasks";
 
+import { toast } from "sonner";
+import useContextMenu from "@/hook/useContextMenu";
+
+import { CreateTask } from "./CreateTask";
+import { EditTask } from "./EditTask";
+import { DeleteTask } from "./DeleteTask";
+
+import { Task } from "@/shader/entities/tasks";
 
 export function Tasks(){
   const [data, setData] = useState<Task[]>([])

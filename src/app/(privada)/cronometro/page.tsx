@@ -1,5 +1,5 @@
 import { Header } from "@/components/layout/Header";
-import { StopWatchTask } from "@/components/ui/task/TimerTask";
+import { StopWatchTask } from "./_components/TimerTask";
 import { Suspense } from "react";
 
 
