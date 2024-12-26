@@ -57,7 +57,7 @@ export function StopWatchTask(){
       intervalRef.current = setInterval(() => {
         const newTimer = timer - 1; 
 
-        if (newTimer % 2 === 0) {
+        if (newTimer % 10 === 0) {
           fetch(`${process.env.NEXT_PUBLIC_BASE_URL_API}/api/projects/${currentProject}/tasks/${currentTask}`, {
             method: 'PATCH',
             headers: {
@@ -77,10 +77,22 @@ export function StopWatchTask(){
           projectId: currentProject,
           taskId: currentTask,
           time: newTimer,
-          lastTimeSaved: newTimer%2 === 0 ? newTimer  : lastTimeSaved,
+          lastTimeSaved: newTimer%10 === 0 ? newTimer  : lastTimeSaved,
         }));
 
-        if (newTimer === 0) setStatus("Stopped"); 
+        if (newTimer === 0) {
+          setStatus("Stopped"); 
+          window.Notification.requestPermission().then((permission) => {
+            if (permission === 'granted') {
+              new Notification('MindTasker', {
+                lang: 'pt-BR',
+                icon: '/favicon.ico',
+                body: `O cronometro da tarefa "${name}" chegou ao fim!`,
+                requireInteraction: true,
+              });
+            }
+          })
+        }
       }, 60000); 
     }
     
@@ -118,10 +130,10 @@ export function StopWatchTask(){
         </div>
         <div className="m-auto w-64 flex justify-between items-center">
         {status === "Stopped" ? (
-           <>
+          <>
             <Button onClick={()=> setTimer(60)} type="button">Resetar</Button>
             <Button onClick={()=> setStatus("Running")} type="button">Iniciar</Button>
-           </>
+          </>
         ): (
           <>
             <Button onClick={()=> setStatus("Stopped")} type="button">Parar</Button>
