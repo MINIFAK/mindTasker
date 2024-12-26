@@ -1,6 +1,6 @@
 
 import { db } from '@/services/FirebaseConnection';
-import { deleteDoc, doc, updateDoc } from 'firebase/firestore';
+import { collection, deleteDoc, doc, getDocs, query, updateDoc, where } from 'firebase/firestore';
 import { getServerSession } from 'next-auth';
 import { NextRequest, NextResponse } from 'next/server'
 
@@ -10,7 +10,14 @@ export async function DELETE(req: NextRequest, { params }: { params: { id: strin
     
     if (!session || !session.user?.email) throw new Error("Você precisa estar autenticado para acessar esses dados.")
     
-    await deleteDoc(doc(db, "projects", params.id))
+    await deleteDoc(doc(db, "projects", params.id)).then(async()=> {
+      const q = query(collection(db, 'tasks'), where("projectId", "==", params.id)); 
+      await getDocs(q).then((querySnapshot)=> {
+        querySnapshot.forEach(async (docSnapshot) => {
+          await deleteDoc(doc(db, 'tasks', docSnapshot.id)); 
+        });
+      })
+    })
 
     return NextResponse.json({ id: params.id })
   } catch (error) {
