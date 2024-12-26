@@ -1,5 +1,6 @@
 "use client"
 
+import { Button } from "@/components/ui/Button";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle} from "@/components/ui/shadcn/alert-dialog";
 
 interface DeleteTaskProps{
@@ -19,8 +20,8 @@ export function DeleteTask({title,description,placeholder, open, onOpenChange,de
          <AlertDialogDescription>{description}</AlertDialogDescription>
        </AlertDialogHeader>
        <AlertDialogFooter>
-         <AlertDialogCancel>Cancelar</AlertDialogCancel>
-         <AlertDialogAction onClick={()=> deleteTask()}>Deletar</AlertDialogAction>
+        <Button type="button" variant="text" onClick={()=> onOpenChange(false)}>Cancelar</Button>
+        <Button type="button" onClick={()=> {onOpenChange(false); deleteTask()}}>Deletar</Button>
        </AlertDialogFooter>
      </AlertDialogContent>
    </AlertDialog>

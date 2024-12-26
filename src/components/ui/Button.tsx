@@ -4,7 +4,7 @@ import Link from "next/link";
 import { tv, VariantProps } from "tailwind-variants";
 
 const buttonVariant = tv({
-  base: "flex items-center rounded-3xl gap-2 p-3 justify-center transition-colors duration-300 ease-in-out",
+  base: "flex items-center rounded-3xl gap-2 py-2 px-3 justify-center transition-colors duration-300 ease-in-out",
   variants: {
     variant: {
       default:
