@@ -18,6 +18,11 @@ export function TaskDetail({
   const searchParams = useSearchParams()
   const params = new URLSearchParams(searchParams.toString())
 
+  const date = new Date();
+
+  const day = date.getDate() - 1
+  const daysOfWeek = day - date.getDay()
+  
   return(
     <section className="mt-8 ml-10 mr-5 sm:flex sm:justify-between">
     <div>
@@ -30,15 +35,15 @@ export function TaskDetail({
         </h3>
 
         <div className="flex gap-3 my-5">
-          <Button type="link" href={`/cronometro?${params.toString()}`}> Iniciar Cronometro</Button>
+          <Button type="link" href={`/cronometro?${params.toString()}`}>Iniciar Cronometro</Button>
           <Button type="button" variant="text">
             Ver gráfico
           </Button>
         </div>
 
         <div className="px-1 font inter text-lg">
-          <p>Hoje, o total de foco na tarefa foi de <strong className="text-primary-500 font-bold">{convertMinutesToHours(task.month[new Date().getDate()] ?? 0)}</strong></p>
-          <p>Nesta semana, o total de foco na tarefa foi de <strong className="text-primary-500 font-bold">{convertMinutesToHours(task.month.slice(0, 7).reduce((acc, n) => acc + n, 0))}</strong></p>
+          <p>Hoje, o total de foco na tarefa foi de <strong className="text-primary-500 font-bold">{convertMinutesToHours(task.month[day] ?? 0)}</strong></p>
+          <p>Nesta semana, o total de foco na tarefa foi de <strong className="text-primary-500 font-bold">{convertMinutesToHours(task.month.slice(daysOfWeek, daysOfWeek + 7).reduce((acc, n) => acc + n, 0))}</strong></p>
           <p>Neste mês, o total de foco na tarefa foi de <strong className="text-primary-500 font-bold">{convertMinutesToHours(task.month.reduce((acc, n) => acc + n, 0))}</strong></p>
         </div>
       </div>
