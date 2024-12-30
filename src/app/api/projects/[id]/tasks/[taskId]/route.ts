@@ -43,8 +43,8 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
     const taskYear = [...task.year]
     const taskMonth = [...task.month]
     
-    taskYear[now.getMonth() + 1] += Number(addedTime)
-    taskMonth[now.getDate()] += Number(addedTime)
+    taskYear[now.getMonth()] += Number(addedTime)
+    taskMonth[now.getDate() - 1] += Number(addedTime)
     
     await updateDoc(doc(db, "tasks", params.taskId), {
       year: taskYear,
