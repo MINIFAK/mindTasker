@@ -8,6 +8,7 @@ import { useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/Button";
 import Timer from "@/components/ui/Time";
 
+
 export function StopWatchTask(){
   const [name, setName] = useState("...")
   const [status, setStatus] = useState<'Stopped' |'Running'|'Paused'>("Stopped")
@@ -30,6 +31,7 @@ export function StopWatchTask(){
         credentials: 'include', 
         next: { revalidate: 300 }
       }).then((res) => res.json()).then((data)=> {                
+    window.Notification.requestPermission()
         return data.name
       }).catch(error => {
         console.error('[Erro ao buscar dados das tarefa:', error);
@@ -95,6 +97,14 @@ export function StopWatchTask(){
         }
       }, 60000); 
     }
+
+    console.log("intervalo", intervalRef.current);
+    console.log("status", status);
+    console.log("timer", timer);
+    console.log("lastTimeSaved", lastTimeSaved);
+    
+    
+    
     
     if (status !== "Running" && intervalRef.current) {
       clearInterval(intervalRef.current);
