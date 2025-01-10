@@ -5,10 +5,10 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { PlusIcon } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 
-import { Button } from "../../../../components/ui/Button";
-import HorizontalScroller from "../../../../components/ui/HorizontalScroller";
-import CardTask from "../../../../components/ui/CardTask";
-import { ContextMenu, ContextMenuButton } from "../../../../components/ui/contextMenu";
+import { Button } from "@/components/ui/Button";
+import HorizontalScroller from "@/components/ui/HorizontalScroller";
+import CardTask from "@/components/ui/CardTask";
+import { ContextMenu, ContextMenuButton } from "@/components/ui/contextMenu";
 import { TaskDetail } from "./TaskDetail";
 
 import { toast } from "sonner";
@@ -59,7 +59,7 @@ export function Tasks(){
 
     params.set("task", id)
 
-    router.push(`/?${params.toString()}`)
+    router.push(`/dashboard?${params.toString()}`)
   },[searchParams])
 
   const createTask = useCallback( async (name: string) => {        
@@ -119,7 +119,7 @@ export function Tasks(){
 
       params.delete("task")
 
-      router.push(`/?${params.toString()}`)
+      router.push(`/dashboard?${params.toString()}`)
     })
     .catch(error => {
       console.error('Erro ao deletar um projeto:', error);

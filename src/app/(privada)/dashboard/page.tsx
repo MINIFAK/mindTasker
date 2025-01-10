@@ -1,10 +1,10 @@
 import { Header } from "@/components/layout/Header";
-import { Projects } from "@/app/(privada)/_components/task/Projects";
-import { Tasks } from "@/app/(privada)/_components/task/Tasks";
+import { Projects } from "./_components/Projects";
+import { Tasks } from "./_components/Tasks";
 import { getServerSession } from "next-auth";
 
 
-export default async function Home() {
+export default async function Dashboard() {
   const session = await getServerSession()
 
   return (

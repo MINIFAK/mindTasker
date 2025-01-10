@@ -6,12 +6,12 @@ import { PlusIcon } from "lucide-react";
 import { FormEvent, useCallback, useEffect, useState } from "react";
 
 import { toast } from "sonner";
-import {ContextMenu, ContextMenuButton} from "../../../../components/ui/contextMenu";
+import {ContextMenu, ContextMenuButton} from "@/components/ui/contextMenu";
 import useContextMenu from "@/hook/useContextMenu";
 
-import { Button } from "../../../../components/ui/Button";
-import HorizontalScroller from "../../../../components/ui/HorizontalScroller";
-import CardTask from "../../../../components/ui/CardTask";
+import { Button } from "@/components/ui/Button";
+import HorizontalScroller from "@/components/ui/HorizontalScroller";
+import CardTask from "@/components/ui/CardTask";
 
 import { CreateTask } from "./CreateTask";
 import { EditTask } from "./EditTask";
@@ -62,7 +62,7 @@ export function Projects(){
 
       params.delete("task")
  
-      router.push(`/?${params.toString()}`)
+      router.push(`/dashboard?${params.toString()}`)
   },[searchParams])
   const createProject = useCallback( async (name: string) => {    
     fetch("/api/projects", {
@@ -120,7 +120,7 @@ export function Projects(){
 
       params.delete("project")
 
-      router.push(`/?${params.toString()}`)
+      router.push(`/dashboard?${params.toString()}`)
     })
     .catch(error => {
       console.error('Erro ao deletar um projeto:', error);

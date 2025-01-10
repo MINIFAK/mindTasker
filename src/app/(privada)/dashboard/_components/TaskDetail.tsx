@@ -6,8 +6,8 @@ import { useSearchParams } from "next/navigation";
 import { Task } from "@/shader/entities/tasks";
 import { convertMinutesInHour, convertMinutesToHours } from "@/util/convertDate";
 
-import { Button } from "../../../../components/ui/Button";
-import Timer from "../../../../components/ui/Time";
+import { Button } from "@/components/ui/Button";
+import Timer from "@/components/ui/Time";
 
 export function TaskDetail({
   task
