@@ -5,7 +5,7 @@ import { NextRequest } from "next/server"; // Importa NextRequest
 
 
 export const config = {
-  matcher: ["/dashboard/:path*" ,"/"],
+  matcher: ["/dashboard/:path*", "/cronometro/:path*"],
 };
 export default async function middleware(req: NextRequest) {
   const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET }) 
