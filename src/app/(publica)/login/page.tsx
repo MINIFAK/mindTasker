@@ -41,7 +41,7 @@ export default async function Login() {
 
         {/* <p className="text-center font-inter font-medium my-4">ou</p> */}
 
-        <Button type="button" onClick={() => {signIn("google", {callbackUrl: "/"})}}>
+        <Button type="button" onClick={() => {signIn("google", {callbackUrl: "/dashboard"})}}>
           <FcGoogle className="w-6 h-6"/>
           Entrar com o Google
         </Button>

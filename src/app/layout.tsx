@@ -28,7 +28,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${inter.variable} ${poppins.variable}`}
+        className={`${inter.variable} ${poppins.variable} bg-[#F2F2F2]`}
       >
         <Providers>
          {children}
