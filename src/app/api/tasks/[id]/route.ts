@@ -1,19 +1,27 @@
+import { db } from "@/services/FirebaseConnection";
+import { deleteDoc, doc, getDoc, updateDoc } from "firebase/firestore";
+import { getServerSession } from "next-auth";
+import { NextRequest, NextResponse } from "next/server";
 
-import { db } from '@/services/FirebaseConnection';
-import { deleteDoc, doc, getDoc, updateDoc } from 'firebase/firestore';
-import { getServerSession } from 'next-auth';
-import { NextRequest, NextResponse } from 'next/server'
-
-export async function GET(req: NextRequest, { params }: { params: { id: string } }){
-  try{
+export async function GET(
+  req: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  try {
     const session = await getServerSession();
-    
-    if(!session || !session.user?.email) throw new Error("Você precisa estar autenticado para acessar esses dados.")
-    
-    const docRef = await getDoc(doc(db, "tasks", params.id))
 
-    if(!docRef || docRef.data()?.email !== session.user.email) throw new Error("Esse tarefa não foi encontrada")
-    
+    if (!session || !session.user?.email)
+      throw new Error(
+        "Você precisa estar autenticado para acessar esses dados."
+      );
+
+    const docRef = await getDoc(doc(db, "tasks", params.id));
+
+    if (!docRef) throw new Error("Esse tarefa não foi encontrada");
+
+    if (docRef.data()?.email !== session.user.email)
+      throw new Error("Esse tarefa não pertence a vocẽ");
+
     return NextResponse.json({
       id: docRef.id,
       name: docRef.data()?.name,
@@ -21,13 +29,9 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
       month: docRef.data()?.month,
       year: docRef.data()?.year,
     });
-
-    } catch (error) {
-    if(error instanceof Error){
-      return NextResponse.json(
-        { message: error.message },
-        { status: 500 }
-      );
+  } catch (error) {
+    if (error instanceof Error) {
+      return NextResponse.json({ message: error.message }, { status: 500 });
     }
     return NextResponse.json(
       { message: "Houve um erro ao tentar ver uma tarefa" },
@@ -36,21 +40,24 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
   }
 }
 
-export async function DELETE(req: NextRequest, { params }: { params: { id: string } }){
+export async function DELETE(
+  req: NextRequest,
+  { params }: { params: { id: string } }
+) {
   try {
     const session = await getServerSession();
-    
-    if(!session || !session.user?.email) throw new Error("Você precisa estar autenticado para acessar esses dados.")
-    
-    await deleteDoc(doc(db, "tasks", params.id))
 
-    return NextResponse.json({ id: params.id })
-  } catch (error) {
-    if(error instanceof Error){
-      return NextResponse.json(
-        { message: error.message },
-        { status: 500 }
+    if (!session || !session.user?.email)
+      throw new Error(
+        "Você precisa estar autenticado para acessar esses dados."
       );
+
+    await deleteDoc(doc(db, "tasks", params.id));
+
+    return NextResponse.json({ id: params.id });
+  } catch (error) {
+    if (error instanceof Error) {
+      return NextResponse.json({ message: error.message }, { status: 500 });
     }
     return NextResponse.json(
       { message: "Houve um erro ao tentar deletar uma tarefa" },
@@ -59,27 +66,30 @@ export async function DELETE(req: NextRequest, { params }: { params: { id: strin
   }
 }
 
-export async function PATCH(req: NextRequest, { params }: { params: { id: string } }){
+export async function PATCH(
+  req: NextRequest,
+  { params }: { params: { id: string } }
+) {
   try {
     const session = await getServerSession();
-    
-    if(!session || !session.user?.email) throw new Error("Você precisa estar autenticado para acessar esses dados.")
-    
+
+    if (!session || !session.user?.email)
+      throw new Error(
+        "Você precisa estar autenticado para acessar esses dados."
+      );
+
     const { name } = await req.json();
 
-    if(!name) throw new Error("Necessario enviar o nome da tarefa")
-    
+    if (!name) throw new Error("Necessario enviar o nome da tarefa");
+
     await updateDoc(doc(db, "tasks", params.id), {
       name,
-    })
-    
-    return NextResponse.json({ id: params.id, name: name })
+    });
+
+    return NextResponse.json({ id: params.id, name: name });
   } catch (error) {
-    if(error instanceof Error){
-      return NextResponse.json(
-        { message: error.message },
-        { status: 500 }
-      );
+    if (error instanceof Error) {
+      return NextResponse.json({ message: error.message }, { status: 500 });
     }
     return NextResponse.json(
       { message: "Houve um erro ao tentar atualizar o nome da tarefa" },
