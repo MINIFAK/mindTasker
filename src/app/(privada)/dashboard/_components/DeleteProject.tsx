@@ -2,43 +2,45 @@
 
 import { Button } from "@/components/ui/Button";
 import { AlertDialog, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/shadcn/alert-dialog";
-import { Task } from "@/shader/entities/tasks";
+import { Project } from "@/shader/entities/projects";
 import { useSearchParams } from "next/navigation";
 import { useRouter } from "next/navigation";
 import { useCallback } from "react";
 import { toast } from "sonner";
 
-interface DeleteTaskProps {
+interface DeleteProjectProps {
   open: boolean;
-  currentTask: string | null
+  currentProject: string | null
   title: string;
   description?: string;
-  setData: React.Dispatch<React.SetStateAction<Task[]>>
+  setData: React.Dispatch<React.SetStateAction<Project[]>>
   onOpenChange: (open: boolean) => void
 }
-
-export function DeleteTask({ title, description, open, onOpenChange, currentTask, setData }: DeleteTaskProps) {
+export function DeleteProject({ title, description, open, onOpenChange, currentProject, setData }: DeleteProjectProps) {
   const searchParams = useSearchParams()
   const router = useRouter()
 
-  const deleteTask = useCallback(async () => {
-    fetch(`/api/tasks/${currentTask}`, {
+  const deleteProject = useCallback(async () => {
+    fetch(`/api/projects/${currentProject}`, {
       method: 'DELETE',
     }).then(response => response.json())
-      .then(task => {
-        toast(task.message ?? "A tarefa foi deletada com sucesso")
-        if (task.message) return
+      .then(project => {
+        toast(project.message ?? "O projeto foi deletado com sucesso")
+        if (project.message) return
 
-        setData((oldData) => oldData?.filter((project) => project.id != currentTask))
+        setData((oldData) => oldData?.filter((project) => project.id != currentProject))
+
+
 
         const params = new URLSearchParams(searchParams.toString())
-        params.delete("task")
+        params.delete("project")
         router.push(`/dashboard?${params.toString()}`)
       })
       .catch((error) => {
-        toast("Não foi possível deletar a tarefa")
+        toast("Não foi possível deletar o projeto")
       });
-  }, [setData, currentTask])
+
+  }, [setData, currentProject])
 
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
@@ -47,9 +49,9 @@ export function DeleteTask({ title, description, open, onOpenChange, currentTask
           <AlertDialogTitle>{title}</AlertDialogTitle>
           <AlertDialogDescription>{description}</AlertDialogDescription>
         </AlertDialogHeader>
-        <AlertDialogFooter className="*:my-0.5">
+        <AlertDialogFooter>
           <Button type="button" variant="text" onClick={() => onOpenChange(false)}>Cancelar</Button>
-          <Button type="button" onClick={() => { onOpenChange(false); deleteTask() }}>Deletar</Button>
+          <Button type="button" onClick={() => { onOpenChange(false); deleteProject() }}>Deletar</Button>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>

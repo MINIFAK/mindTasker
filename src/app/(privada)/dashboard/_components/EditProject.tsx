@@ -12,27 +12,25 @@ import { useCallback, useRef, useState } from "react";
 
 import Input from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
-import { Task } from "@/shader/entities/tasks";
 import { toast } from "sonner";
+import { Project } from "@/shader/entities/projects";
 
-interface EditTaskProps {
+interface EditProjectProps {
   open: boolean;
-  currentTask: string | null
+  currentProject: string | null
   title: string;
   description?: string;
   placeholder?: string
-  setData: React.Dispatch<React.SetStateAction<Task[]>>
+  setData: React.Dispatch<React.SetStateAction<Project[]>>
   onOpenChange: (open: boolean) => void
 }
-
-export function EditTask({ title, description, placeholder, open, onOpenChange, setData, currentTask
-}: EditTaskProps) {
+export function EditProject({ title, description, placeholder, open, onOpenChange, setData, currentProject
+}: EditProjectProps) {
   const name = useRef<HTMLInputElement>(null)
   const [error, setError] = useState("")
 
-  const editTask = useCallback(async (name: string) => {
-    if (!name) return setError("O novo nome da tarefa é obrigatório")
-    fetch(`/api/tasks/${currentTask}`, {
+  const editProject = useCallback(async (name: string) => {
+    fetch(`/api/projects/${currentProject}`, {
       method: 'PATCH',
       headers: {
         "Content-Type": "application/json",
@@ -40,21 +38,20 @@ export function EditTask({ title, description, placeholder, open, onOpenChange, 
       body: JSON.stringify({
         name
       }),
-    })
-      .then(response => response.json())
-      .then(task => {
-        if (task.message) return setError(task.message)
+    }).then(res => res.json())
+      .then(project => {
+        if (project.message) return setError(project.message)
 
-        toast("O nome da tarefa foi alterado com sucesso")
+        toast("O nome do projeto foi alterado com sucesso")
         setData((oldData) => {
-          const index = oldData.findIndex((data) => data.id === currentTask)
+          const index = oldData.findIndex((data) => data.id === currentProject)
           oldData[index].name = name
           return oldData
         })
         onOpenChange(false)
       })
-      .catch(() => setError("Ocorreu um erro ao editar a tarefa, tente novamente"))
-  }, [setData, currentTask])
+      .catch(() => setError("Ocorreu um erro ao editar o projeto, tente novamente"))
+  }, [setData, currentProject])
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -70,7 +67,7 @@ export function EditTask({ title, description, placeholder, open, onOpenChange, 
           error={error}
         />
         <DialogFooter>
-          <Button onClick={() => editTask(name.current?.value ?? "")} type="button">Alterar Nome</Button>
+          <Button onClick={() => editProject(name.current?.value ?? "")} type="button">Alterar Nome</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

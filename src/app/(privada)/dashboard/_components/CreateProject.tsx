@@ -12,45 +12,39 @@ import { useCallback, useRef, useState } from "react";
 
 import Input from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
-import { Task } from "@/shader/entities/tasks";
 
 import { toast } from "sonner";
+import { Project } from "@/shader/entities/projects";
 
-interface CreateTaskProps {
-  currentProject: string
+interface CreateProjectProps {
   title: string;
   description?: string;
   placeholder?: string;
   open: boolean;
   onOpenChange: (open: boolean) => void
-  setData: React.Dispatch<React.SetStateAction<Task[]>>
+  setData: React.Dispatch<React.SetStateAction<Project[]>>
 }
-
-export function CreateTask({ title, description, placeholder, setData, currentProject, open, onOpenChange }: CreateTaskProps) {
+export function CreateProject({ title, description, placeholder, setData, open, onOpenChange }: CreateProjectProps) {
   const name = useRef<HTMLInputElement>(null)
   const [error, setError] = useState("")
 
-  const createTask = useCallback(async (name: string) => {
-    if (!name) return setError("O nome da tarefa é obrigatório")
-
-    fetch("/api/tasks", {
+  const createProject = useCallback(async (name: string) => {
+    fetch("/api/projects", {
       method: 'POST',
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        name,
-        projectId: currentProject
+        name
       }),
-    })
-      .then(res => res.json())
-      .then(task => {
-        if (task.message) return setError(task.message)
-        toast("A tarefa foi criada com sucesso")
-        setData((oldData) => [task, ...oldData])
+    }).then(res => res.json())
+      .then(project => {
+        if (project.message) return setError(project.message)
+        toast("O projeto foi criado com sucesso")
+        setData((oldData) => [project, ...oldData])
       })
-      .catch(() => setError("Ocorreu um erro ao criar a tarefa, tente novamente"));
-  }, [setData, currentProject])
+      .catch(() => setError("Ocorreu um erro ao criar o projeto, tente novamente"));
+  }, [setData])
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -66,7 +60,7 @@ export function CreateTask({ title, description, placeholder, setData, currentPr
           error={error}
         />
         <DialogFooter>
-          <Button onClick={() => createTask(name.current?.value ?? "")} type="buttonSubmit">Criar Projeto</Button>
+          <Button onClick={() => createProject(name.current?.value ?? "")} type="buttonSubmit">Criar Projeto</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
