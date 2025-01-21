@@ -39,7 +39,7 @@ export function Hero() {
       </motion.div>
       <Particles
         className="absolute inset-0 z-0"
-        quantity={1000}
+        quantity={250}
         ease={80}
         color={"#a4a4a4"}
         refresh

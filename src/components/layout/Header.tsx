@@ -2,16 +2,16 @@
 import Image from "next/image";
 import Clock from "../ui/Clock";
 import { Button } from "../ui/Button";
-import {  signOut, useSession } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuPortal, DropdownMenuSeparator, DropdownMenuTrigger } from "../ui/shadcn/dropdown-menu";
 import Link from "next/link";
 
 export const Header = () => {
-  const { data: session} = useSession()
+  const { data: session } = useSession()
 
   return (
     <header className="p-2 sm:p-6 flex justify-between">
-      <div className="relative w-48 sm:w-60 h-11">
+      <div className="relative w-48 sm:w-60 h-11 ">
         <Link href="/">
           <Image
             src="/MindTaskerLight.svg"
@@ -31,30 +31,29 @@ export const Header = () => {
           <>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                  <div className="relative w-12 h-12">
-                    <Image
-                      src={session?.user?.image ?? ""}
-                      alt="Sua imagem"
-                      priority
-                      fill
-                      className="rounded-full"
-                    />
-                  </div>
+                <div className="relative w-12 h-12">
+                  <Image
+                    src={session?.user?.image ?? ""}
+                    alt="Imagem de Perfil do Usuário"
+                    priority
+                    fill
+                    className="rounded-full cursor-pointer"
+                  />
+                </div>
               </DropdownMenuTrigger>
               <DropdownMenuContent className="w-56">
                 <DropdownMenuLabel>Minha Conta</DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuGroup>
+                  {/* <DropdownMenuItem>Configurações
+                  </DropdownMenuItem> */}
                   <DropdownMenuItem>
-                    <span>Configurações</span>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem>
-                    <span>Dashboard</span>
+                    <Link href="/dashboard">Dashboard</Link>
                   </DropdownMenuItem>
                 </DropdownMenuGroup>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem>
-                  <button onClick={()=> signOut()} >Sair da Conta</button>
+                  <button onClick={() => signOut()} >Sair da Conta</button>
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
