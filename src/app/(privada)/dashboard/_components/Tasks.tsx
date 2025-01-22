@@ -14,16 +14,18 @@ import { TaskDetail } from "./TaskDetail";
 import useContextMenu from "@/hook/useContextMenu";
 
 import { CreateTask } from "./CreateTask";
-import { EditTask } from "./EditTask";
+import { EditTaskName } from "./EditTaskName";
 import { DeleteTask } from "./DeleteTask";
 
 import { Task } from "@/shader/entities/tasks";
+import { EditTaskGoal } from "./EditTaskGoal";
 
 export function Tasks() {
   const [data, setData] = useState<Task[]>([])
 
   const [openCreate, setOpenCreate] = useState(false)
-  const [openEdit, setOpenEdit] = useState(false)
+  const [openEditName, setOpenEditName] = useState(false)
+  const [openEditGoal, setOpenEditGoal] = useState(false)
   const [openDelete, setOpenDelete] = useState(false)
 
   const { menuRef, handleContextMenu, visible, position } = useContextMenu()
@@ -33,6 +35,8 @@ export function Tasks() {
 
   const currentProject = searchParams.get('project')
   const currentTask = searchParams.get('task')
+
+  const currentTaskData = data.find(task => task.id === currentTask)
 
   useEffect(() => {
     const getData = async () => {
@@ -59,7 +63,6 @@ export function Tasks() {
     params.set("task", id)
     router.push(`/dashboard?${params.toString()}`)
   }, [searchParams])
-
 
   if (!currentProject) return null;
 
@@ -109,9 +112,9 @@ export function Tasks() {
         <ContextMenu visible={visible} menuRef={menuRef} position={position} >
           <ContextMenuButton onClick={() => router.push(`/grafico?${params.toString()}`)} icon={<ChartColumnDecreasingIcon />}>Ver gráfico</ContextMenuButton>
           <ContextMenuDivider />
-          <ContextMenuButton onClick={() => setOpenEdit(true)} icon={<PencilIcon />}>Alterar Nome</ContextMenuButton>
-          <ContextMenuButton onClick={() => setOpenEdit(true)} icon={<AlarmClockIcon />}>Alterar Meta</ContextMenuButton>
-          <ContextMenuButton onClick={() => setOpenEdit(true)} icon={<CalendarIcon />}>Editar Data Limite</ContextMenuButton>
+          <ContextMenuButton onClick={() => setOpenEditName(true)} icon={<PencilIcon />}>Alterar Nome</ContextMenuButton>
+          <ContextMenuButton onClick={() => setOpenEditGoal(true)} icon={<AlarmClockIcon />}>Alterar Meta</ContextMenuButton>
+          <ContextMenuButton onClick={() => setOpenEditGoal(true)} icon={<CalendarIcon />}>Editar Data Limite</ContextMenuButton>
           <ContextMenuDivider />
           <ContextMenuButton onClick={() => setOpenDelete(true)} icon={<DeleteIcon />}>Deletar Tarefa</ContextMenuButton>
         </ContextMenu>
@@ -127,13 +130,20 @@ export function Tasks() {
         placeholder="Ex: Verbo To Be, Estudar tempos verbais..."
       />
 
-      <EditTask
-        open={openEdit} onOpenChange={setOpenEdit}
+      <EditTaskName
+        open={openEditName} onOpenChange={setOpenEditName}
         setData={setData}
         currentTask={currentTask}
         title="Alterar nome"
         description={`Deseja realmente alterar o nome dessa tarefa ${data.find((data) => data.id === currentTask)?.name} ?`}
+        placeholder="Digite o novo nome..."
       />
+      <EditTaskGoal
+        open={openEditGoal} onOpenChange={setOpenEditGoal}
+        setData={setData}
+        task={currentTaskData}
+      />
+
       <DeleteTask
         open={openDelete} onOpenChange={setOpenDelete}
         currentTask={currentTask} setData={setData}

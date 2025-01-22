@@ -68,6 +68,8 @@ export async function POST(req: NextRequest) {
       projectId,
       month: Array.from({ length: 31 }, () => 0),
       year: Array.from({ length: 12 }, () => 0),
+      deadline: new Date().toDateString(),
+      goal: 60 * 30,
     });
 
     return NextResponse.json({
@@ -76,6 +78,8 @@ export async function POST(req: NextRequest) {
       projectId,
       month: Array.from({ length: 31 }, () => 0),
       year: Array.from({ length: 12 }, () => 0),
+      deadline: new Date().toDateString(),
+      goal: 60 * 30,
     });
   } catch (error) {
     if (error instanceof Error) {

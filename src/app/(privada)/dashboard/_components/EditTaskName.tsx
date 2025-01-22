@@ -25,7 +25,7 @@ interface EditTaskProps {
   onOpenChange: (open: boolean) => void
 }
 
-export function EditTask({ title, description, placeholder, open, onOpenChange, setData, currentTask
+export function EditTaskName({ title, description, placeholder, open, onOpenChange, setData, currentTask
 }: EditTaskProps) {
   const name = useRef<HTMLInputElement>(null)
   const [error, setError] = useState("")
