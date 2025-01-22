@@ -4,4 +4,6 @@ export type Task = {
   name: string;
   month: number[];
   year: number[];
-}
+  goal: number;
+  deadline: Date;
+};

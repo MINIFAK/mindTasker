@@ -28,6 +28,8 @@ export async function GET(
       projectId: docRef.data()?.projectId,
       month: docRef.data()?.month,
       year: docRef.data()?.year,
+      goal: docRef.data()?.goal,
+      deadline: docRef.data()?.deadline,
     });
   } catch (error) {
     if (error instanceof Error) {
@@ -78,21 +80,26 @@ export async function PATCH(
         "Você precisa estar autenticado para acessar esses dados."
       );
 
-    const { name } = await req.json();
-
-    if (!name) throw new Error("Necessario enviar o nome da tarefa");
+    const { name, goal, deadline } = await req.json();
 
     await updateDoc(doc(db, "tasks", params.id), {
-      name,
+      ...(name && { name }),
+      ...(goal && { goal: Number.parseInt(goal) }),
+      ...(deadline && { deadline }),
     });
 
-    return NextResponse.json({ id: params.id, name: name });
+    return NextResponse.json({
+      id: params.id,
+      ...(name && { name }),
+      ...(goal && { goal: Number.parseInt(goal) }),
+      ...(deadline && { deadline }),
+    });
   } catch (error) {
     if (error instanceof Error) {
       return NextResponse.json({ message: error.message }, { status: 500 });
     }
     return NextResponse.json(
-      { message: "Houve um erro ao tentar atualizar o nome da tarefa" },
+      { message: "Houve um erro ao tentar atualizar a tarefa" },
       { status: 500 }
     );
   }
