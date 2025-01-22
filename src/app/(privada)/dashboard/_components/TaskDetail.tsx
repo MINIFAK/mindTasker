@@ -4,7 +4,7 @@
 import { useSearchParams } from "next/navigation";
 
 import { Task } from "@/shader/entities/tasks";
-import { convertMinutesInHour, convertMinutesToHours } from "@/util/convertDate";
+import { convertMinutesInHour, convertMinutesToHours, convertMinutesToPorcent } from "@/util/convertDate";
 
 import { Button } from "@/components/ui/Button";
 import Timer from "@/components/ui/Time";
@@ -45,6 +45,7 @@ export function TaskDetail({
             <p>Hoje, o total de foco na tarefa foi de <strong className="text-primary-500 font-bold">{convertMinutesToHours(task.month[day] ?? 0)}</strong></p>
             <p>Nesta semana, o total de foco na tarefa foi de <strong className="text-primary-500 font-bold">{convertMinutesToHours(task.month.slice(daysOfWeek, daysOfWeek + 7).reduce((acc, n) => acc + n, 0))}</strong></p>
             <p>Neste mês, o total de foco na tarefa foi de <strong className="text-primary-500 font-bold">{convertMinutesToHours(task.month.reduce((acc, n) => acc + n, 0))}</strong></p>
+            <p>Neste ano, o total de foco na tarefa foi de <strong className="text-primary-500 font-bold">{convertMinutesToHours(task.year.reduce((acc, n) => acc + n, 0))}</strong></p>
           </div>
         </div>
       </div>
@@ -53,11 +54,11 @@ export function TaskDetail({
           Conquiste o Foco
         </h2>
         <p className="mb-4">
-          Desmotre e conquiste o foco nessa tarefa com um total de<strong className="text-primary-500"> {convertMinutesToHours(task.goal ?? 6000)} </strong>
+          Desmotre e conquiste o foco nessa tarefa com um total de<strong className="text-primary-500"> {convertMinutesToHours(task.goal ?? 60 * 30)} </strong>
         </p>
         <div className="flex items-center justify-center">
-          <Timer current={task.year?.reduce((acc, n) => acc + n, 0)} max={task.goal ?? 60 * 30}>
-            <p className="font-inter text-5xl font-semibold">{convertMinutesInHour(task.year?.reduce((acc, n) => acc + n, 0))}</p>
+          <Timer current={task.month?.reduce((acc, n) => acc + n, 0)} max={task.goal ?? 60 * 30}>
+            <p className="font-inter text-5xl font-semibold">{convertMinutesToPorcent(task.month?.reduce((acc, n) => acc + n, 0), task.goal ?? 60 * 30)}%</p>
           </Timer>
         </div>
       </div>
