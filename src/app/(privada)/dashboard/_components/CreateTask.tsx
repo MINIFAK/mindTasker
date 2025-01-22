@@ -18,15 +18,12 @@ import { toast } from "sonner";
 
 interface CreateTaskProps {
   currentProject: string
-  title: string;
-  description?: string;
-  placeholder?: string;
   open: boolean;
   onOpenChange: (open: boolean) => void
   setData: React.Dispatch<React.SetStateAction<Task[]>>
 }
 
-export function CreateTask({ title, description, placeholder, setData, currentProject, open, onOpenChange }: CreateTaskProps) {
+export function CreateTask({ setData, currentProject, open, onOpenChange }: CreateTaskProps) {
   const name = useRef<HTMLInputElement>(null)
   const [error, setError] = useState("")
 
@@ -56,12 +53,12 @@ export function CreateTask({ title, description, placeholder, setData, currentPr
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[512px]">
         <DialogHeader>
-          <DialogTitle>{title}</DialogTitle>
-          <DialogDescription> {description}</DialogDescription>
+          <DialogTitle>Nova Tarefa</DialogTitle>
+          <DialogDescription>Crie agora o sua nova tarefa! Insira o nome e comece a dar forma à organização do seu tempo</DialogDescription>
         </DialogHeader>
         <Input
           id="name"
-          placeholder={placeholder}
+          placeholder={"Ex: Verbo To Be, Estudar tempos verbais..."}
           ref={name}
           error={error}
         />

@@ -24,10 +24,15 @@ interface EditTaskGoalProps {
 
 export function EditTaskGoal({ open, task, onOpenChange, setData
 }: EditTaskGoalProps) {
-  const [hour, setHour] = useState<number>(task?.goal ? Math.floor(task.goal / 60) : 0);
-  const [minute, setMinute] = useState<number>(task?.goal ? task.goal % 60 : 0);
+  const [error, setError] = useState("")
+
+  const [hour, setHour] = useState<number>(0);
+  const [minute, setMinute] = useState<number>(0);
+
 
   const editTask = useCallback(async (goal: number) => {
+    if (goal === task?.goal) return setError("A meta da tarefa não pode ser igual ao antiga")
+    setError("")
     fetch(`/api/tasks/${task?.id}`, {
       method: 'PATCH',
       headers: {
@@ -39,7 +44,7 @@ export function EditTaskGoal({ open, task, onOpenChange, setData
     })
       .then(response => response.json())
       .then(task => {
-        if (task.message) return toast(task.message)
+        if (task.message) return setError(task.message)
 
         toast("A meta da tarefa foi alterada com sucesso")
         setData((tasks) => {
@@ -49,28 +54,33 @@ export function EditTaskGoal({ open, task, onOpenChange, setData
         })
         onOpenChange(false)
       })
-      .catch(() => toast("Ocorreu um erro ao alterar a meta da tarefa, tente novamente"))
+      .catch(() => setError("Ocorreu um erro ao alterar a meta da tarefa, tente novamente"))
   }, [setData, task])
+
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[512px]">
         <DialogHeader>
           <DialogTitle>Alterar Meta</DialogTitle>
-          <DialogDescription>Deseja realmente alterar a meta dessa tarefa <strong className="text-primary-400">{task?.name}</strong></DialogDescription>
+          <DialogDescription>Deseja realmente alterar a meta dessa tarefa <strong className="text-primary-600">{task?.name}</strong> ?</DialogDescription>
         </DialogHeader>
-        <div className="flex justify-center gap-4">
-          <InputNumber
-            value={hour}
-            setValue={setHour}
-            label="Hora"
-            max={999}
-          /><InputNumber
-            value={minute}
-            setValue={setMinute}
-            label="Minutos"
-            max={59}
-          />
+        <div className="flex flex-col items-center gap-2 ">
+          <div className="flex justify-center gap-4">
+            <InputNumber
+              value={hour}
+              setValue={setHour}
+              label="Hora"
+              max={999}
+            />
+            <InputNumber
+              value={minute}
+              setValue={setMinute}
+              label="Minutos"
+              max={59}
+            />
+          </div>
+          {error && <span className="px-1.5 font-inter font-semibold text-sm text-red-500">{error}</span>}
         </div>
         <DialogFooter>
           <Button onClick={() => editTask(hour * 60 + minute)} type="button">Alterar Meta</Button>

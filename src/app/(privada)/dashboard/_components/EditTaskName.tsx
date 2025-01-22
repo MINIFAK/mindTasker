@@ -17,22 +17,21 @@ import { toast } from "sonner";
 
 interface EditTaskProps {
   open: boolean;
-  currentTask: string | null
-  title: string;
-  description?: string;
-  placeholder?: string
+  task: Task | undefined
   setData: React.Dispatch<React.SetStateAction<Task[]>>
   onOpenChange: (open: boolean) => void
 }
 
-export function EditTaskName({ title, description, placeholder, open, onOpenChange, setData, currentTask
+export function EditTaskName({ open, onOpenChange, setData, task
 }: EditTaskProps) {
-  const name = useRef<HTMLInputElement>(null)
   const [error, setError] = useState("")
+
+  const name = useRef<HTMLInputElement>(null)
 
   const editTask = useCallback(async (name: string) => {
     if (!name) return setError("O novo nome da tarefa é obrigatório")
-    fetch(`/api/tasks/${currentTask}`, {
+    if (name === task?.name) return setError("O novo nome da tarefa não pode ser igual ao antigo")
+    fetch(`/api/tasks/${task?.id}`, {
       method: 'PATCH',
       headers: {
         "Content-Type": "application/json",
@@ -46,26 +45,26 @@ export function EditTaskName({ title, description, placeholder, open, onOpenChan
         if (task.message) return setError(task.message)
 
         toast("O nome da tarefa foi alterado com sucesso")
-        setData((oldData) => {
-          const index = oldData.findIndex((data) => data.id === currentTask)
-          oldData[index].name = name
-          return oldData
+        setData((tasks) => {
+          const index = tasks.findIndex((oldTask) => oldTask.id === task.id)
+          tasks[index].name = name
+          return tasks
         })
         onOpenChange(false)
       })
-      .catch(() => setError("Ocorreu um erro ao editar a tarefa, tente novamente"))
-  }, [setData, currentTask])
+      .catch(() => setError("Ocorreu um erro ao alterar o nome da tarefa, tente novamente"))
+  }, [setData, task])
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[512px]">
         <DialogHeader>
-          <DialogTitle>{title}</DialogTitle>
-          <DialogDescription> {description}</DialogDescription>
+          <DialogTitle>Alterar nome</DialogTitle>
+          <DialogDescription>Deseja realmente alterar o nome dessa tarefa <strong className="text-primary-600">{task?.name}</strong> ?</DialogDescription>
         </DialogHeader>
         <Input
           id="name"
-          placeholder={placeholder}
+          placeholder="Digite o novo nome..."
           ref={name}
           error={error}
         />

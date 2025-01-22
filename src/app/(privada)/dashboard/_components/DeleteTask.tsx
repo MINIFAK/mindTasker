@@ -5,47 +5,49 @@ import { AlertDialog, AlertDialogContent, AlertDialogDescription, AlertDialogFoo
 import { Task } from "@/shader/entities/tasks";
 import { useSearchParams } from "next/navigation";
 import { useRouter } from "next/navigation";
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 import { toast } from "sonner";
 
 interface DeleteTaskProps {
   open: boolean;
-  currentTask: string | null
-  title: string;
-  description?: string;
+  task: Task | undefined
   setData: React.Dispatch<React.SetStateAction<Task[]>>
   onOpenChange: (open: boolean) => void
 }
 
-export function DeleteTask({ title, description, open, onOpenChange, currentTask, setData }: DeleteTaskProps) {
+export function DeleteTask({ task, open, onOpenChange, setData }: DeleteTaskProps) {
+  const [error, setError] = useState("")
+
   const searchParams = useSearchParams()
   const router = useRouter()
 
   const deleteTask = useCallback(async () => {
-    fetch(`/api/tasks/${currentTask}`, {
+    setError("")
+    fetch(`/api/tasks/${task?.id}`, {
       method: 'DELETE',
     }).then(response => response.json())
       .then(task => {
-        toast(task.message ?? "A tarefa foi deletada com sucesso")
-        if (task.message) return
+        if (task.message) return setError(task.message)
+        toast("A tarefa foi deletada com sucesso")
 
-        setData((oldData) => oldData?.filter((project) => project.id != currentTask))
+        setData((tasks) => tasks?.filter((project) => project.id != task.id))
 
         const params = new URLSearchParams(searchParams.toString())
         params.delete("task")
         router.push(`/dashboard?${params.toString()}`)
       })
-      .catch((error) => {
-        toast("Não foi possível deletar a tarefa")
+      .catch(() => {
+        setError("Ocorreu um erro ao deletar a tarefa, tente novamente")
       });
-  }, [setData, currentTask])
+  }, [setData, task])
 
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>{title}</AlertDialogTitle>
-          <AlertDialogDescription>{description}</AlertDialogDescription>
+          <AlertDialogTitle>Deletar Tarefa</AlertDialogTitle>
+          <AlertDialogDescription>Deseja realmente deletar essa tarefa <strong className="text-primary-600">{task?.name}</strong> ?</AlertDialogDescription>
+          {error && <span className="px-1.5 font-inter font-semibold text-sm text-red-500">{error}</span>}
         </AlertDialogHeader>
         <AlertDialogFooter className="*:my-0.5">
           <Button type="button" variant="text" onClick={() => onOpenChange(false)}>Cancelar</Button>

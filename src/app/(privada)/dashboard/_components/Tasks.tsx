@@ -34,9 +34,8 @@ export function Tasks() {
   const params = new URLSearchParams(searchParams.toString())
 
   const currentProject = searchParams.get('project')
-  const currentTask = searchParams.get('task')
 
-  const currentTaskData = data.find(task => task.id === currentTask)
+  const currentTaskData = data.find(task => task.id === searchParams.get("task"))
 
   useEffect(() => {
     const getData = async () => {
@@ -100,7 +99,7 @@ export function Tasks() {
                   onClick={() => {
                     setTask(task.id)
                   }}
-                  select={currentTask === task.id ? true : false}
+                  select={currentTaskData?.id === task.id ? true : false}
                   name={task.name}
                 />
               </div>
@@ -125,18 +124,12 @@ export function Tasks() {
         open={openCreate} onOpenChange={setOpenCreate}
         setData={setData}
         currentProject={currentProject}
-        title="Nova Tarefa"
-        description="Crie agora o sua nova tarefa! Insira o nome e comece a dar forma à organização do seu tempo."
-        placeholder="Ex: Verbo To Be, Estudar tempos verbais..."
       />
 
       <EditTaskName
         open={openEditName} onOpenChange={setOpenEditName}
         setData={setData}
-        currentTask={currentTask}
-        title="Alterar nome"
-        description={`Deseja realmente alterar o nome dessa tarefa ${data.find((data) => data.id === currentTask)?.name} ?`}
-        placeholder="Digite o novo nome..."
+        task={currentTaskData}
       />
       <EditTaskGoal
         open={openEditGoal} onOpenChange={setOpenEditGoal}
@@ -146,12 +139,11 @@ export function Tasks() {
 
       <DeleteTask
         open={openDelete} onOpenChange={setOpenDelete}
-        currentTask={currentTask} setData={setData}
-        title="Deletar Tarefa"
-        description={`Deseja realmente deletar essa tarefa ${data.find((data) => data.id === currentTask)?.name} ?`}
+        task={currentTaskData}
+        setData={setData}
       />
 
-      <TaskDetail task={data.find((task) => task.id === currentTask)} />
+      <TaskDetail task={currentTaskData} />
     </>
   )
 }
