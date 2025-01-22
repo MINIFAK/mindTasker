@@ -5,53 +5,59 @@ import { AlertDialog, AlertDialogContent, AlertDialogDescription, AlertDialogFoo
 import { Project } from "@/shader/entities/projects";
 import { useSearchParams } from "next/navigation";
 import { useRouter } from "next/navigation";
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 import { toast } from "sonner";
 
 interface DeleteProjectProps {
   open: boolean;
-  currentProject: string | null
-  title: string;
-  description?: string;
+  project: Project | undefined
   setData: React.Dispatch<React.SetStateAction<Project[]>>
   onOpenChange: (open: boolean) => void
 }
-export function DeleteProject({ title, description, open, onOpenChange, currentProject, setData }: DeleteProjectProps) {
+export function DeleteProject({ project, open, onOpenChange, setData }: DeleteProjectProps) {
+  const [error, setError] = useState("")
+
   const searchParams = useSearchParams()
   const router = useRouter()
 
   const deleteProject = useCallback(async () => {
-    fetch(`/api/projects/${currentProject}`, {
+    setError('')
+    fetch(`/api/projects/${project?.id}`, {
       method: 'DELETE',
-    }).then(response => response.json())
+    })
+      .then(response => response.json())
       .then(project => {
-        toast(project.message ?? "O projeto foi deletado com sucesso")
-        if (project.message) return
+        if (project.message) return setError(project.message)
 
-        setData((oldData) => oldData?.filter((project) => project.id != currentProject))
+        toast("O projeto foi deletado com sucesso")
 
-
+        setData((projects) => projects?.filter((oldProject) => oldProject.id != project.id))
 
         const params = new URLSearchParams(searchParams.toString())
-        params.delete("project")
-        router.push(`/dashboard?${params.toString()}`)
-      })
-      .catch((error) => {
-        toast("Não foi possível deletar o projeto")
-      });
 
-  }, [setData, currentProject])
+        params.delete("project")
+        params.delete("task")
+        router.push(`/dashboard?${params.toString()}`)
+
+        onOpenChange(false)
+      })
+      .catch(() => {
+        setError("Não foi possível deletar o projeto")
+      });
+  }, [project?.id])
 
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>{title}</AlertDialogTitle>
-          <AlertDialogDescription>{description}</AlertDialogDescription>
+          <AlertDialogTitle>Deletar Projeto</AlertDialogTitle>
+          <AlertDialogDescription>Deseja realmente deletar esse projeto <strong className="text-primary-600">{project?.name}</strong> ?</AlertDialogDescription>
+          {error && <span className="px-1.5 font-inter font-semibold text-sm text-red-500">{error}</span>}
+
         </AlertDialogHeader>
         <AlertDialogFooter>
           <Button type="button" variant="text" onClick={() => onOpenChange(false)}>Cancelar</Button>
-          <Button type="button" onClick={() => { onOpenChange(false); deleteProject() }}>Deletar</Button>
+          <Button type="button" onClick={() => deleteProject()}>Deletar</Button>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>

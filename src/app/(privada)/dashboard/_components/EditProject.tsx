@@ -17,20 +17,21 @@ import { Project } from "@/shader/entities/projects";
 
 interface EditProjectProps {
   open: boolean;
-  currentProject: string | null
-  title: string;
-  description?: string;
-  placeholder?: string
+  project: Project | undefined
   setData: React.Dispatch<React.SetStateAction<Project[]>>
   onOpenChange: (open: boolean) => void
 }
-export function EditProject({ title, description, placeholder, open, onOpenChange, setData, currentProject
+export function EditProject({ project, open, onOpenChange, setData
 }: EditProjectProps) {
-  const name = useRef<HTMLInputElement>(null)
   const [error, setError] = useState("")
+  const name = useRef<HTMLInputElement>(null)
 
   const editProject = useCallback(async (name: string) => {
-    fetch(`/api/projects/${currentProject}`, {
+    if (!name) return setError("O novo nome do projeto é obrigatório")
+    if (name === project?.name) return setError("O novo nome do projeto não pode ser igual ao antigo")
+
+    setError('')
+    fetch(`/api/projects/${project?.id}`, {
       method: 'PATCH',
       headers: {
         "Content-Type": "application/json",
@@ -43,26 +44,27 @@ export function EditProject({ title, description, placeholder, open, onOpenChang
         if (project.message) return setError(project.message)
 
         toast("O nome do projeto foi alterado com sucesso")
-        setData((oldData) => {
-          const index = oldData.findIndex((data) => data.id === currentProject)
-          oldData[index].name = name
-          return oldData
+
+        setData((projects) => {
+          const index = projects.findIndex((oldProject) => oldProject.id === project.id)
+          projects[index].name = name
+          return projects
         })
         onOpenChange(false)
       })
-      .catch(() => setError("Ocorreu um erro ao editar o projeto, tente novamente"))
-  }, [setData, currentProject])
+      .catch(() => setError("Ocorreu um erro ao alterar o nome do projeto, tente novamente"))
+  }, [project?.id, project?.name])
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[512px]">
         <DialogHeader>
-          <DialogTitle>{title}</DialogTitle>
-          <DialogDescription> {description}</DialogDescription>
+          <DialogTitle>Alterar nome</DialogTitle>
+          <DialogDescription>Deseja realmente alterar o nome desse projeto <strong className="text-primary-600">{project?.name}</strong> ?</DialogDescription>
         </DialogHeader>
         <Input
           id="name"
-          placeholder={placeholder}
+          placeholder="Digite o novo nome..."
           ref={name}
           error={error}
         />

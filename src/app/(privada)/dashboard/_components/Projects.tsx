@@ -2,7 +2,7 @@
 
 import { useRouter, useSearchParams } from "next/navigation";
 
-import { AlarmClockIcon, CalendarIcon, ChartColumnDecreasingIcon, DeleteIcon, PencilIcon, PlusIcon } from "lucide-react";
+import { ChartColumnDecreasingIcon, DeleteIcon, PencilIcon, PlusIcon } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 
 import { ContextMenu, ContextMenuButton, ContextMenuDivider } from "@/components/ui/contextMenu";
@@ -31,7 +31,7 @@ export function Projects() {
   const params = new URLSearchParams(searchParams.toString())
   params.delete("task")
 
-  const currentProject = searchParams.get('project')
+  const currentProject = data.find(project => project.id === searchParams.get("project"))
 
   useEffect(() => {
     const getData = async () => {
@@ -53,7 +53,7 @@ export function Projects() {
   }, [])
 
   const setProject = useCallback((id: string) => {
-    if (currentProject === id) return
+    if (currentProject?.id === id) return
 
     const params = new URLSearchParams(searchParams.toString())
 
@@ -62,7 +62,7 @@ export function Projects() {
     params.delete("task")
 
     router.push(`/dashboard?${params.toString()}`)
-  }, [searchParams])
+  }, [searchParams, currentProject?.id])
 
   return (
     <>
@@ -92,7 +92,7 @@ export function Projects() {
                   onClick={() => {
                     setProject(project.id)
                   }}
-                  select={currentProject === project.id ? true : false}
+                  select={currentProject?.id === project.id ? true : false}
                   name={project.name}
                 />
 
@@ -104,8 +104,6 @@ export function Projects() {
             <ContextMenuButton onClick={() => router.push(`/grafico?${params.toString()}`)} icon={<ChartColumnDecreasingIcon />}>Ver gráfico</ContextMenuButton>
             <ContextMenuDivider />
             <ContextMenuButton onClick={() => setOpenEdit(true)} icon={<PencilIcon />}>Alterar Nome</ContextMenuButton>
-            <ContextMenuButton onClick={() => setOpenEdit(true)} icon={<AlarmClockIcon />}>Alterar Meta</ContextMenuButton>
-            <ContextMenuButton onClick={() => setOpenEdit(true)} icon={<CalendarIcon />}>Editar Data Limite</ContextMenuButton>
             <ContextMenuDivider />
             <ContextMenuButton onClick={() => setOpenDelete(true)} icon={<DeleteIcon />}>Deletar Projeto</ContextMenuButton>
           </ContextMenu>
@@ -113,26 +111,19 @@ export function Projects() {
         </div>
       </section>
       <CreateProject
-        title="Novo Projeto"
-        description="Crie agora o seu novo projeto! Insira o nome e comece a dar forma à organização do seu tempo."
-        placeholder="Ex: Aprender Inglês, Aprender Back End..."
         open={openCreate} onOpenChange={setOpenCreate}
         setData={setData}
       />
 
       <EditProject
-        title="Alterar nome"
-        description={`Deseja realmente alterar o nome desse projeto ${data.find((data) => data.id === currentProject)?.name} ?`}
-        currentProject={currentProject}
         open={openEdit} onOpenChange={setOpenEdit}
         setData={setData}
+        project={currentProject}
       />
       <DeleteProject
-        title="Deletar Projeto"
-        description={`Deseja realmente deletar esse projeto ${data.find((data) => data.id === currentProject)?.name} ?`}
         open={openDelete} onOpenChange={setOpenDelete}
         setData={setData}
-        currentProject={currentProject}
+        project={currentProject}
       />
     </>
   )
