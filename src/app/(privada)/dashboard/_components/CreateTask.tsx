@@ -30,6 +30,7 @@ export function CreateTask({ setData, currentProject, open, onOpenChange }: Crea
   const createTask = useCallback(async (name: string) => {
     if (!name) return setError("O nome da tarefa é obrigatório")
 
+    setError('')
     fetch("/api/tasks", {
       method: 'POST',
       headers: {
@@ -44,10 +45,10 @@ export function CreateTask({ setData, currentProject, open, onOpenChange }: Crea
       .then(task => {
         if (task.message) return setError(task.message)
         toast("A tarefa foi criada com sucesso")
-        setData((oldData) => [task, ...oldData])
+        setData((oldTask) => [task, ...oldTask])
       })
       .catch(() => setError("Ocorreu um erro ao criar a tarefa, tente novamente"));
-  }, [setData, currentProject])
+  }, [currentProject])
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -63,7 +64,7 @@ export function CreateTask({ setData, currentProject, open, onOpenChange }: Crea
           error={error}
         />
         <DialogFooter>
-          <Button onClick={() => createTask(name.current?.value ?? "")} type="buttonSubmit">Criar Projeto</Button>
+          <Button onClick={() => createTask(name.current?.value ?? "")} type="buttonSubmit">Criar Tarefa</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

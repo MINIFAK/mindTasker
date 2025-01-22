@@ -30,16 +30,18 @@ export function DeleteTask({ task, open, onOpenChange, setData }: DeleteTaskProp
         if (task.message) return setError(task.message)
         toast("A tarefa foi deletada com sucesso")
 
-        setData((tasks) => tasks?.filter((project) => project.id != task.id))
+        setData((tasks) => tasks?.filter((oldTask) => oldTask.id != task.id))
 
         const params = new URLSearchParams(searchParams.toString())
         params.delete("task")
         router.push(`/dashboard?${params.toString()}`)
+
+        onOpenChange(false)
       })
       .catch(() => {
         setError("Ocorreu um erro ao deletar a tarefa, tente novamente")
       });
-  }, [setData, task])
+  }, [task?.id])
 
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
@@ -51,7 +53,7 @@ export function DeleteTask({ task, open, onOpenChange, setData }: DeleteTaskProp
         </AlertDialogHeader>
         <AlertDialogFooter className="*:my-0.5">
           <Button type="button" variant="text" onClick={() => onOpenChange(false)}>Cancelar</Button>
-          <Button type="button" onClick={() => { onOpenChange(false); deleteTask() }}>Deletar</Button>
+          <Button type="button" onClick={() => deleteTask()}>Deletar</Button>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>

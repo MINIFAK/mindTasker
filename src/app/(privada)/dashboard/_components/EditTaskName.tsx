@@ -31,6 +31,8 @@ export function EditTaskName({ open, onOpenChange, setData, task
   const editTask = useCallback(async (name: string) => {
     if (!name) return setError("O novo nome da tarefa é obrigatório")
     if (name === task?.name) return setError("O novo nome da tarefa não pode ser igual ao antigo")
+
+    setError("")
     fetch(`/api/tasks/${task?.id}`, {
       method: 'PATCH',
       headers: {
@@ -53,7 +55,7 @@ export function EditTaskName({ open, onOpenChange, setData, task
         onOpenChange(false)
       })
       .catch(() => setError("Ocorreu um erro ao alterar o nome da tarefa, tente novamente"))
-  }, [setData, task])
+  }, [task?.id, task?.name])
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>

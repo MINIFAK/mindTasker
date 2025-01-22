@@ -29,9 +29,9 @@ export function EditTaskGoal({ open, task, onOpenChange, setData
   const [hour, setHour] = useState<number>(0);
   const [minute, setMinute] = useState<number>(0);
 
-
   const editTask = useCallback(async (goal: number) => {
     if (goal === task?.goal) return setError("A meta da tarefa não pode ser igual ao antiga")
+
     setError("")
     fetch(`/api/tasks/${task?.id}`, {
       method: 'PATCH',
@@ -48,14 +48,14 @@ export function EditTaskGoal({ open, task, onOpenChange, setData
 
         toast("A meta da tarefa foi alterada com sucesso")
         setData((tasks) => {
-          const index = tasks.findIndex((OldTask) => OldTask.id === task.id)
+          const index = tasks.findIndex((oldTask) => oldTask.id === task.id)
           tasks[index].goal = goal
           return tasks
         })
         onOpenChange(false)
       })
       .catch(() => setError("Ocorreu um erro ao alterar a meta da tarefa, tente novamente"))
-  }, [setData, task])
+  }, [task?.id, task?.goal])
 
 
   return (
