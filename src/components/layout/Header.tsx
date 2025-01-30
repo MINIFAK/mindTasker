@@ -5,9 +5,12 @@ import { Button } from "../ui/Button";
 import { signOut, useSession } from "next-auth/react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuPortal, DropdownMenuSeparator, DropdownMenuTrigger } from "../ui/shadcn/dropdown-menu";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 export const Header = () => {
   const { data: session } = useSession()
+
+  const router = useRouter()
 
   return (
     <header className="p-2 sm:p-6 flex justify-between">
@@ -47,13 +50,13 @@ export const Header = () => {
                 <DropdownMenuGroup>
                   {/* <DropdownMenuItem>Configurações
                   </DropdownMenuItem> */}
-                  <DropdownMenuItem>
-                    <Link href="/dashboard">Dashboard</Link>
+                  <DropdownMenuItem onClick={() => router.push("/dashboard")} className="cursor-pointer">
+                    Dashboard
                   </DropdownMenuItem>
                 </DropdownMenuGroup>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem>
-                  <button onClick={() => signOut()} >Sair da Conta</button>
+                <DropdownMenuItem onClick={() => signOut()} className="cursor-pointer">
+                  Sair da Conta
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
