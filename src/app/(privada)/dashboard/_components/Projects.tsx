@@ -101,7 +101,7 @@ export function Projects() {
           </HorizontalScroller>
 
           <ContextMenu visible={visible} menuRef={menuRef} position={position} >
-            <ContextMenuButton onClick={() => router.push(`/grafico?${params.toString()}`)} icon={<ChartColumnDecreasingIcon />}>Ver gráfico</ContextMenuButton>
+            <ContextMenuButton onClick={() => router.push(`/grafico/projeto/${currentProject?.id}`)} icon={<ChartColumnDecreasingIcon />}>Ver gráfico</ContextMenuButton>
             <ContextMenuDivider />
             <ContextMenuButton onClick={() => setOpenEdit(true)} icon={<PencilIcon />}>Alterar Nome</ContextMenuButton>
             <ContextMenuDivider />

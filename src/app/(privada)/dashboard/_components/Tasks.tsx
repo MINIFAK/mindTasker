@@ -31,7 +31,6 @@ export function Tasks() {
   const { menuRef, handleContextMenu, visible, position } = useContextMenu()
   const router = useRouter()
   const searchParams = useSearchParams()
-  const params = new URLSearchParams(searchParams.toString())
 
   const currentProject = searchParams.get('project')
 
@@ -109,7 +108,7 @@ export function Tasks() {
         </div>
 
         <ContextMenu visible={visible} menuRef={menuRef} position={position} >
-          <ContextMenuButton onClick={() => router.push(`/grafico?${params.toString()}`)} icon={<ChartColumnDecreasingIcon />}>Ver gráfico</ContextMenuButton>
+          <ContextMenuButton onClick={() => router.push(`/grafico/tarefa/${currentTaskData?.id}`)} icon={<ChartColumnDecreasingIcon />}>Ver gráfico</ContextMenuButton>
           <ContextMenuDivider />
           <ContextMenuButton onClick={() => setOpenEditName(true)} icon={<PencilIcon />}>Alterar Nome</ContextMenuButton>
           <ContextMenuButton onClick={() => setOpenEditGoal(true)} icon={<AlarmClockIcon />}>Alterar Meta</ContextMenuButton>

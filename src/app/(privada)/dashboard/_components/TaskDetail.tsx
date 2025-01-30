@@ -35,8 +35,9 @@ export function TaskDetail({
           </h3>
 
           <div className="flex gap-3 my-5">
+
             <Button type="link" href={`/cronometro?${params.toString()}`}>Iniciar Cronometro</Button>
-            <Button type="button" variant="text">
+            <Button type="link" href={`/grafico/tarefa/${task?.id}`} variant="text">
               Ver gráfico
             </Button>
           </div>
