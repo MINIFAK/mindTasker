@@ -5,19 +5,12 @@ import { Project } from "@/shader/entities/projects";
 import { notFound } from "next/navigation";
 
 export default async function GraficoProjeto({ params }: { params: { id: string } }) {
-  // const currentProject = await getServerData<Project | { message: string }>(`${process.env.NEXT_PUBLIC_BASE_URL_API}/api/projects/${params.id}`, {
-  //   method: "GET",
-  //   next: { revalidate: 60 }
-  // })
+  const currentProject = await getServerData<Project | { message: string }>(`${process.env.NEXT_PUBLIC_BASE_URL_API}/api/projects/${params.id}`, {
+    method: "GET",
+    next: { revalidate: 120 }
+  })
 
-  // if (!currentProject || "message" in currentProject) return notFound()
-
-  const currentProject = {
-    id: params.id,
-    name: "Teste",
-    month: Array.from({ length: 31 }, () => Math.floor(Math.random() * 300)),
-    year: Array.from({ length: 12 }, () => Math.floor(Math.random() * 300)),
-  } as Project
+  if (!currentProject || "message" in currentProject) return notFound()
 
   return (
     <div className="flex flex-col min-h-dvh">
