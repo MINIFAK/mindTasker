@@ -85,14 +85,14 @@ export async function PATCH(
     await updateDoc(doc(db, "tasks", params.id), {
       ...(name && { name }),
       ...(goal && { goal: Number.parseInt(goal) }),
-      ...(deadline && { deadline }),
+      ...((deadline || deadline === null) && { deadline }),
     });
 
     return NextResponse.json({
       id: params.id,
       ...(name && { name }),
       ...(goal && { goal: Number.parseInt(goal) }),
-      ...(deadline && { deadline }),
+      ...((deadline || deadline === null) && { deadline }),
     });
   } catch (error) {
     if (error instanceof Error) {
