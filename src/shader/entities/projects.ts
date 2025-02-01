@@ -1,6 +1,8 @@
-export type Project= {
+type minutes = number;
+
+export type Project = {
   id: string;
   name: string;
-  month: number[];
-  year: number[];
-}
+  month: minutes[];
+  year: minutes[];
+};
