@@ -47,6 +47,15 @@ export function Chart({ currentProject }: { currentProject: Project }) {
 
   const [chart, setChart] = useState<"bar" | "line">("bar")
 
+  const handleSelectDate = (date: DateRange | undefined) => {
+    if (!date) return
+    if (!date.to && date.from) {
+      date.to = new Date(date.from.getTime());
+      date.to.setDate(date.from.getDate() + 1);
+    }
+    setDate(date);
+  };
+
   return (
     <>
       <Card className="w-[1024px] max-h-screen">
@@ -55,7 +64,13 @@ export function Chart({ currentProject }: { currentProject: Project }) {
           <CardDescription>
             <div className="flex justify-between">
               <div className="flex gap-3 sm:gap-6">
-                <DatePicker className="" date={date} setDate={setDate} />
+                <DatePicker
+                  date={date} selected={date}
+                  onSelect={handleSelectDate}
+                  mode="range"
+                  showOutsideDays={false}
+
+                />
                 <Select value={moment} onValueChange={(value: "month" | "year") => setMoment(value)}>
                   <SelectTrigger className="w-20 sm:w-[180px]">
                     <SelectValue placeholder="Momento do Gráfico" />

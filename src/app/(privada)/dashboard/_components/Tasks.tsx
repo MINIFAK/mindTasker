@@ -19,6 +19,7 @@ import { DeleteTask } from "./DeleteTask";
 
 import { Task } from "@/shader/entities/tasks";
 import { EditTaskGoal } from "./EditTaskGoal";
+import { EditTaskDeadline } from "./EditTaskDeadline";
 
 export function Tasks() {
   const [data, setData] = useState<Task[]>([])
@@ -26,6 +27,8 @@ export function Tasks() {
   const [openCreate, setOpenCreate] = useState(false)
   const [openEditName, setOpenEditName] = useState(false)
   const [openEditGoal, setOpenEditGoal] = useState(false)
+  const [openEditDeadline, setOpenEditDeadline] = useState(false)
+
   const [openDelete, setOpenDelete] = useState(false)
 
   const { menuRef, handleContextMenu, visible, position } = useContextMenu()
@@ -112,7 +115,7 @@ export function Tasks() {
           <ContextMenuDivider />
           <ContextMenuButton onClick={() => setOpenEditName(true)} icon={<PencilIcon />}>Alterar Nome</ContextMenuButton>
           <ContextMenuButton onClick={() => setOpenEditGoal(true)} icon={<AlarmClockIcon />}>Alterar Meta</ContextMenuButton>
-          <ContextMenuButton onClick={() => setOpenEditGoal(true)} icon={<CalendarIcon />}>Editar Data Limite</ContextMenuButton>
+          <ContextMenuButton onClick={() => setOpenEditDeadline(true)} icon={<CalendarIcon />}>Editar Data Limite</ContextMenuButton>
           <ContextMenuDivider />
           <ContextMenuButton onClick={() => setOpenDelete(true)} icon={<DeleteIcon />}>Deletar Tarefa</ContextMenuButton>
         </ContextMenu>
@@ -132,6 +135,11 @@ export function Tasks() {
       />
       <EditTaskGoal
         open={openEditGoal} onOpenChange={setOpenEditGoal}
+        setData={setData}
+        task={currentTaskData}
+      />
+      <EditTaskDeadline
+        open={openEditDeadline} onOpenChange={setOpenEditDeadline}
         setData={setData}
         task={currentTaskData}
       />
