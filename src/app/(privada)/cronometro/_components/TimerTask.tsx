@@ -23,20 +23,21 @@ export function StopWatchTask({ currentTask }: { currentTask: Task }) {
   })
 
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
+  const alertRef = useRef<HTMLAudioElement | null>(null)
 
   useEffect(() => {
-    const getTime = async () => {
-      const localTime = localStorage.getItem("timer")
+    window.Notification.requestPermission()
 
-      if (!localTime) return
+    const localTime = localStorage.getItem("timer")
 
-      const lastTime = JSON.parse(localTime) as { projectId: string, taskId: string, time: number; lastTimeSaved: number }
+    if (!localTime) return
 
-      if (lastTime.projectId !== currentTask.projectId || lastTime.taskId !== currentTask.id) return
+    const lastTime = JSON.parse(localTime) as { projectId: string, taskId: string, time: number; lastTimeSaved: number }
 
-      setTimer((timer) => { return { ...timer, time: lastTime.time, lastTimeSaved: lastTime.lastTimeSaved } })
-    }
-    getTime()
+    if (lastTime.projectId !== currentTask.projectId || lastTime.taskId !== currentTask.id) return
+
+    setTimer((timer) => { return { ...timer, time: lastTime.time, lastTimeSaved: lastTime.lastTimeSaved } })
+
   }, [])
 
   useEffect(() => {
@@ -61,6 +62,9 @@ export function StopWatchTask({ currentTask }: { currentTask: Task }) {
         }
 
         if (newTimer === 0) {
+          alertRef.current?.play()
+          localStorage.removeItem("timer")
+
           window.Notification.requestPermission().then((permission) => {
             if (permission === 'granted') {
               new Notification('MindTasker', {
@@ -71,14 +75,14 @@ export function StopWatchTask({ currentTask }: { currentTask: Task }) {
               });
             }
           })
+        } else {
+          localStorage.setItem("timer", JSON.stringify({
+            projectId: currentTask.projectId,
+            taskId: currentTask.id,
+            time: newTimer,
+            lastTimeSaved: newTimer % 2 === 0 ? newTimer : timer.lastTimeSaved,
+          }));
         }
-
-        localStorage.setItem("timer", JSON.stringify({
-          projectId: currentTask.projectId,
-          taskId: currentTask.id,
-          time: newTimer,
-          lastTimeSaved: newTimer % 2 === 0 ? newTimer : timer.lastTimeSaved,
-        }));
 
         setTimer((timer) => {
           return {
@@ -105,7 +109,17 @@ export function StopWatchTask({ currentTask }: { currentTask: Task }) {
 
   const handleReset = useCallback(() => {
     setTimer((timer) => {
-      return { ...timer, lastTimeSaved: 60, time: 60, status: "Stopped" };
+      fetch(`${process.env.NEXT_PUBLIC_BASE_URL_API}/api/projects/${currentTask.projectId}/tasks/${currentTask.id}`, {
+        method: 'PATCH',
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          addedTime: timer.lastTimeSaved - timer.time,
+          date: new Date(),
+        }),
+      });
+      return { ...timer, status: "Stopped", lastTimeSaved: 60, time: 60 };
     })
   }, []);
 
@@ -141,6 +155,7 @@ export function StopWatchTask({ currentTask }: { currentTask: Task }) {
   return (
     <section>
       <Timer current={timer.time} max={60} size={380}>
+        <audio src="/alert.mp3" ref={alertRef} preload="auto" />
         <p className="text-3xl font-inter text-center font-medium">{timer.name}</p>
         <div className="my-4">
           <div className={`flex w-80 ${timer.status !== "Stopped" ? "justify-center" : " justify-between"}`}>
