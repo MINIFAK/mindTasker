@@ -20,15 +20,32 @@ export const metadata: Metadata = {
     default: "MindTasker",
     template: "%s | MindTasker",
   },
-  description: "Organize seu tempo, projetos e tarefas. Melhore sua produtividade com o MindTasker.",
+  description: "Aumente sua produtividade com o MindTasker! Gerencie tarefas, projetos e metas de forma eficiente. Controle seu tempo com Pomodoro e cronômetro para melhor organização. Experimente agora!",
   keywords: [
     "MindTasker",
     "produtividade",
     "gestão de tarefas",
     "organização",
     "tarefas",
+    "tarefa",
     "metas",
+    "metas mensais",
     "melhorias",
+    "projetos",
+    "cronômetro",
+    "pomodoro",
+    "tarefas",
+    "gerenciamento",
+    "gerenciamento de projetos",
+    "gerenciamento de tarefas",
+    "gerenciamento de metas",
+    "gerenciamento de cronômetro",
+    "gerenciamento de pomodoro",
+    "organização de tarefas",
+    "organização de projetos",
+    "organização de metas",
+    "organização de cronômetro",
+    "organização de pomodoro",
   ],
   applicationName: "MindTasker",
   robots: {
@@ -45,7 +62,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "MindTasker - Organize seu tempo",
     description:
-      "Com MindTasker, gerencie suas tarefas de forma fácil e eficiente!",
+      "Aumente sua produtividade com o MindTasker! Gerencie tarefas, projetos e metas de forma eficiente. Controle seu tempo com Pomodoro e cronômetro para melhor organização. Experimente agora!",
     url: "https://mindtasker.vercel.app/",
     siteName: "MindTasker",
     images: [
@@ -63,11 +80,23 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "MindTasker - Organize sua tempo",
     description:
-      "Melhore sua produtividade e organize seu tempo com o MindTasker.",
+      "Aumente sua produtividade com o MindTasker! Gerencie tarefas, projetos e metas de forma eficiente. Controle seu tempo com Pomodoro e cronômetro para melhor organização. Experimente agora!",
     images: ["/MindTaskerLight.svg"],
     creator: "@MindTasker",
   },
-  icons: '/favicon.ico',
+  icons: {
+    icon: "/favicon.ico",
+    shortcut: "/favicon.ico",
+    apple: "/apple-touch-icon.png",
+    other: [
+      { rel: "icon", url: "/favicon-32x32.png", sizes: "32x32", type: "image/png", },
+      { rel: "icon", url: "/favicon-16x16.png", sizes: "16x16", type: "image/png", },
+      { rel: "manifest", url: "/site.webmanifest", },
+      { rel: "mask-icon", url: "/safari-pinned-tab.svg", color: "#0fd815", },
+      { rel: "icon", url: "/android-chrome-192x192.png", sizes: "192x192", type: "image/png" },
+      { rel: "icon", url: "/android-chrome-512x512.png", sizes: "512x512", type: "image/png" },
+    ]
+  },
   alternates: {
     canonical: "https://mindtasker.vercel.app/", // URL canônica
     languages: {
@@ -84,6 +113,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        <meta name="theme-color" content="#0fd815" />
+      </head>
       <body
         className={`${inter.variable} ${poppins.variable} bg-[#F2F2F2]`}
       >
