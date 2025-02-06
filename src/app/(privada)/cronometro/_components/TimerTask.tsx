@@ -3,10 +3,9 @@
 import { ChevronDown, ChevronUp } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 
-import { notFound, useRouter, useSearchParams } from "next/navigation";
-
 import { Button } from "@/components/ui/Button";
 import Timer from "@/components/ui/Time";
+import { Task } from "@/shader/entities/tasks";
 
 
 interface TimerProps {
@@ -15,41 +14,17 @@ interface TimerProps {
   name: string;
   lastTimeSaved: number;
 }
-export function StopWatchTask() {
-
+export function StopWatchTask({ currentTask }: { currentTask: Task }) {
   const [timer, setTimer] = useState<TimerProps>({
     lastTimeSaved: 60,
     status: 'Stopped',
     time: 60,
-    name: "..."
+    name: currentTask.name ?? "..."
   })
-
-  const router = useRouter()
-  const searchParams = useSearchParams()
-  const currentProject = searchParams.get('project')
-  const currentTask = searchParams.get('task')
 
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
-    const getData = async () => {
-      const name = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL_API}/api/tasks/${currentTask}`, {
-        method: "GET",
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include',
-        next: { revalidate: 300 }
-      }).then((res) => res.json()).then((data) => {
-        console.log(data)
-        if (data.message) return router.push("/dashboard")
-        return data.name
-      }).catch(() => {
-        return "Desconhecido"
-      })
-      setTimer((timer) => { return { ...timer, name } })
-      window.Notification.requestPermission()
-    }
     const getTime = async () => {
       const localTime = localStorage.getItem("timer")
 
@@ -57,11 +32,10 @@ export function StopWatchTask() {
 
       const lastTime = JSON.parse(localTime) as { projectId: string, taskId: string, time: number; lastTimeSaved: number }
 
-      if (lastTime.projectId !== currentProject || lastTime.taskId !== currentTask) return
+      if (lastTime.projectId !== currentTask.projectId || lastTime.taskId !== currentTask.id) return
 
       setTimer((timer) => { return { ...timer, time: lastTime.time, lastTimeSaved: lastTime.lastTimeSaved } })
     }
-    getData()
     getTime()
   }, [])
 
@@ -71,9 +45,7 @@ export function StopWatchTask() {
         const newTimer = timer.time - 1;
 
         if (newTimer % 2 === 0) {
-          console.log("SALVANDO NO BANCO");
-
-          fetch(`${process.env.NEXT_PUBLIC_BASE_URL_API}/api/projects/${currentProject}/tasks/${currentTask}`, {
+          fetch(`${process.env.NEXT_PUBLIC_BASE_URL_API}/api/projects/${currentTask.projectId}/tasks/${currentTask.id}`, {
             method: 'PATCH',
             headers: {
               "Content-Type": "application/json",
@@ -102,10 +74,10 @@ export function StopWatchTask() {
         }
 
         localStorage.setItem("timer", JSON.stringify({
-          projectId: currentProject,
-          taskId: currentTask,
+          projectId: currentTask.projectId,
+          taskId: currentTask.id,
           time: newTimer,
-          lastTimeSaved: newTimer % 10 === 0 ? newTimer : timer.lastTimeSaved,
+          lastTimeSaved: newTimer % 2 === 0 ? newTimer : timer.lastTimeSaved,
         }));
 
         setTimer((timer) => {
@@ -125,7 +97,6 @@ export function StopWatchTask() {
     }
     return () => {
       if (!intervalRef.current) return
-      console.log("Limpar intervalo");
       clearInterval(intervalRef.current);
       intervalRef.current = null;
     };
@@ -147,7 +118,7 @@ export function StopWatchTask() {
 
   const handlePause = useCallback(() => {
     setTimer((timer) => {
-      fetch(`${process.env.NEXT_PUBLIC_BASE_URL_API}/api/projects/${currentProject}/tasks/${currentTask}`, {
+      fetch(`${process.env.NEXT_PUBLIC_BASE_URL_API}/api/projects/${currentTask.projectId}/tasks/${currentTask.id}`, {
         method: 'PATCH',
         headers: {
           "Content-Type": "application/json",
