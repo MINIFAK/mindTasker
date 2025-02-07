@@ -98,9 +98,9 @@ export const metadata: Metadata = {
     ]
   },
   alternates: {
-    canonical: "https://mindtasker.vercel.app/", // URL canônica
+    canonical: "https://mindtasker.vercel.app/",
     languages: {
-      "pt-BR": "https://mindtasker.vercel.app/", // Alternativa para português
+      "pt-BR": "https://mindtasker.vercel.app/",
     },
   },
 
