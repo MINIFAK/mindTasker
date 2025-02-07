@@ -9,9 +9,10 @@ import { Task } from "@/shader/entities/tasks";
 
 
 interface TimerProps {
-  status: 'Stopped' | 'Running' | 'Paused';
+  status: 'Stopped' | 'Running' | 'Paused' | 'Finished' | "PausedTime";
   time: number;
   name: string;
+  pausedTime: number;
   lastTimeSaved: number;
 }
 export function StopWatchTask({ currentTask }: { currentTask: Task }) {
@@ -19,10 +20,13 @@ export function StopWatchTask({ currentTask }: { currentTask: Task }) {
     lastTimeSaved: 60,
     status: 'Stopped',
     time: 60,
+    pausedTime: 0,
     name: currentTask.name ?? "..."
   })
 
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
+  const intervalPausedTimeRef = useRef<NodeJS.Timeout | null>(null);
+
   const alertRef = useRef<HTMLAudioElement | null>(null)
 
   useEffect(() => {
@@ -84,13 +88,25 @@ export function StopWatchTask({ currentTask }: { currentTask: Task }) {
           }));
         }
 
+        document.title = `${newTimer} min - ${timer.name} | MindTasker`
         setTimer((timer) => {
           return {
             ...timer,
             time: newTimer,
-            status: newTimer === 0 ? "Stopped" : "Running",
+            status: newTimer === 0 ? "Finished" : "Running",
             lastTimeSaved: newTimer % 2 === 0 ? newTimer : timer.lastTimeSaved
           };
+        })
+      }, 60000);
+    }
+
+    if (timer.status === "PausedTime" && !intervalPausedTimeRef.current) {
+      intervalPausedTimeRef.current = setInterval(() => {
+        setTimer((timer) => {
+          return {
+            ...timer,
+            pausedTime: timer.pausedTime + 1
+          }
         })
       }, 60000);
     }
@@ -99,10 +115,20 @@ export function StopWatchTask({ currentTask }: { currentTask: Task }) {
       clearInterval(intervalRef.current);
       intervalRef.current = null;
     }
+
+    if (timer.status !== "PausedTime" && intervalPausedTimeRef.current) {
+      clearInterval(intervalPausedTimeRef.current);
+      intervalPausedTimeRef.current = null;
+    }
+
     return () => {
       if (!intervalRef.current) return
       clearInterval(intervalRef.current);
       intervalRef.current = null;
+
+      if (!intervalPausedTimeRef.current) return
+      clearInterval(intervalPausedTimeRef.current);
+      intervalPausedTimeRef.current = null;
     };
   }, [timer]);
 
@@ -119,7 +145,7 @@ export function StopWatchTask({ currentTask }: { currentTask: Task }) {
           date: new Date(),
         }),
       });
-      return { ...timer, status: "Stopped", lastTimeSaved: 60, time: 60 };
+      return { ...timer, status: "Stopped", pausedTime: 0, lastTimeSaved: 60, time: 60 };
     })
   }, []);
 
@@ -129,6 +155,11 @@ export function StopWatchTask({ currentTask }: { currentTask: Task }) {
     })
   }, []);
 
+  const handlePausedTime = useCallback(() => {
+    setTimer((timer) => {
+      return { ...timer, status: "PausedTime" };
+    })
+  }, []);
 
   const handlePause = useCallback(() => {
     setTimer((timer) => {
@@ -154,7 +185,11 @@ export function StopWatchTask({ currentTask }: { currentTask: Task }) {
 
   return (
     <section>
-      <Timer current={timer.time} max={60} size={380}>
+      <Timer
+        current={timer.status === "PausedTime" ? timer.pausedTime : timer.time}
+        max={60}
+        size={380}
+      >
         <audio src="/alert.mp3" ref={alertRef} preload="auto" />
         <p className="text-3xl font-inter text-center font-medium">{timer.name}</p>
         <div className="my-4">
@@ -166,7 +201,7 @@ export function StopWatchTask({ currentTask }: { currentTask: Task }) {
                 <ChevronDown className="w-16 h-16" />
               </button>
             )}
-            <p className="font-poppins text-6xl font-semibold">{timer.time}</p>
+            <p className="font-poppins text-6xl font-semibold">{timer.status === "PausedTime" ? timer.pausedTime : timer.time}</p>
             {timer.status === "Stopped" && (
               <button disabled={timer.time === 60} className={timer.time === 60 ? "cursor-not-allowed text-black/50" : ""}
                 onClick={() => setTimer((timer) => { return { ...timer, time: timer.time + 1, lastTimeSaved: timer.time + 1 } })}
@@ -177,19 +212,29 @@ export function StopWatchTask({ currentTask }: { currentTask: Task }) {
           </div>
           <p className="text-2xl font-inter text-center">minutos</p>
         </div>
-        <div className="m-auto w-64 flex justify-between items-center">
-          {timer.status === "Stopped" ? (
+        <div className={`m-auto w-64 flex ${timer.status === "PausedTime" ? "justify-center" : "justify-between"} items-center`}>
+          {timer.status === "Stopped" && (
             <>
               <Button onClick={handleReset} type="button">Resetar</Button>
               <Button onClick={handleStart} type="button">Iniciar</Button>
             </>
-          ) : (
+          )}
+          {timer.status === "Finished" && (
+            <>
+              <Button onClick={handleReset} type="button">Reniciar</Button>
+              <Button onClick={handlePausedTime} type="button">Descansar</Button>
+            </>
+          )}
+          {timer.status === "PausedTime" && (
+            <Button onClick={handleReset} type="button">Reniciar</Button>
+          )}
+          {timer.status !== "Stopped" && timer.status !== "Finished" && timer.status !== "PausedTime" && (
             <>
               <Button onClick={handleReset} type="button">Parar</Button>
               {timer.status === "Paused" ? (
                 <Button onClick={handleReturn} type="button">Voltar</Button>
               ) : (
-                <Button onClick={handlePause} type="button">Pausar</Button>
+                <Button onClick={handlePause} type="button">Pausa Rápida</Button>
               )}
             </>
           )}
