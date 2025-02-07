@@ -3,9 +3,10 @@ import Image from "next/image";
 import Clock from "../ui/Clock";
 import { Button } from "../ui/Button";
 import { signOut, useSession } from "next-auth/react";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuPortal, DropdownMenuSeparator, DropdownMenuTrigger } from "../ui/shadcn/dropdown-menu";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "../ui/shadcn/dropdown-menu";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { UserRoundIcon } from "lucide-react";
 
 export const Header = () => {
   const { data: session } = useSession()
@@ -35,13 +36,18 @@ export const Header = () => {
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <div className="relative w-12 h-12">
-                  <Image
-                    src={session?.user?.image ?? ""}
-                    alt="Imagem de Perfil do Usuário"
-                    priority
-                    fill
-                    className="rounded-full cursor-pointer"
-                  />
+                  {session.user?.image ? (
+                    <Image
+                      src={session?.user?.image ?? ""}
+                      alt="Imagem de Perfil do Usuário"
+                      priority
+                      fill
+                      className="rounded-full cursor-pointer"
+                    />
+                  ) : (
+                    <UserRoundIcon className="w-10 h-10 mt-1 curor-pointer text-neutral-800 ring-offset-4 ring-offset-primary-400" />
+                  )
+                  }
                 </div>
               </DropdownMenuTrigger>
               <DropdownMenuContent className="w-56">

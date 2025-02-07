@@ -8,40 +8,34 @@ import Image from "next/image";
 import { signIn } from "next-auth/react";
 import Input from "@/components/ui/Input";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
+import { useState } from "react";
 
-export function Login() {
-  const searchParams = useSearchParams()
-
-  let error = ""
-
-  if (searchParams.get("error")) {
-    if (searchParams.get("error") === "CredentialsSignin") {
-      error = "Email ou senha incorretos"
-    }
-    if (searchParams.get("error") === "OAuthSignin") {
-      error = "Usuário não encontrado"
-    }
-    if (searchParams.get("error") === "OAuthAccountNotLinked") {
-      error = "Usuário não encontrado"
-    }
-    if (searchParams.get("error") === "OAuthCallback") {
-      error = "Usuário não encontrado"
-    }
-    if (searchParams.get("error") === "OtherProvider") {
-      error = "Usuário não encontrado nesse provedor"
-    }
-  }
+export function Register() {
+  const [error, setError] = useState("")
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
+
+    setError("")
+
+    const name = e.currentTarget.nome.value
     const email = e.currentTarget.email.value
     const password = e.currentTarget.password.value
 
-    signIn("credentials", {
-      email,
-      password,
-      redirect: true,
+    await fetch("/api/auth/credential/register", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ name, email, password }),
+    }).then(res => res.json()).then((data) => {
+      if ("message" in data) return setError(data.message)
+
+      signIn("credentials", {
+        email,
+        password,
+        redirect: true,
+      })
     })
   }
 
@@ -67,25 +61,26 @@ export function Login() {
           </div>
 
           <div className="my-4">
-            <h1 className="font-poppins font-semibold text-3xl text-primary-600 text-end ">Faça Login em sua Conta</h1>
-            <p className="font-inter font-medium text-lg px-1 text-end">Bem-vindo de volta! Selecione o método de login:</p>
+            <h1 className="font-poppins font-semibold text-3xl text-primary-600 text-end ">Faça Registro</h1>
+            <p className="font-inter font-medium text-lg px-1 text-end">Seja bem vindo ao MindTasker, faça o seu cadastro !</p>
           </div>
 
           <form onSubmit={handleSubmit} className="flex flex-col gap-3">
+            <Input name="nome" placeholder="Digite seu nome..." required />
             <Input name="email" placeholder="Digite seu email..." required />
             <Input error={error} name="password" placeholder="Digite seu senha..." type="password" required />
-            <Button type="buttonSubmit">Logar</Button>
+            <Button type="buttonSubmit">Registrar</Button>
           </form>
 
           <p className="text-center font-inter font-medium my-4">ou</p>
 
           <Button type="button" onClick={() => { signIn("google", { callbackUrl: "/dashboard" }) }}>
             <FcGoogle className="w-6 h-6" />
-            Entrar com o Google
+            Registre com o Google
           </Button>
 
 
-          <p className="font-inter my-2 text-center">não possui uma conta ainda ?<Link href="/register" className="text-primary-500"> Registre-se</Link></p>
+          <p className="font-inter my-2 text-center">já possui uma conta ?<Link href="/login" className="text-primary-500"> Faça Login</Link></p>
 
         </section>
       </main>
