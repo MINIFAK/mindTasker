@@ -1,5 +1,6 @@
 import { Metadata } from "next";
 import { Register } from "./_components/register";
+import { Suspense } from "react";
 
 export const metadata: Metadata = {
   title: 'Login',
@@ -8,6 +9,8 @@ export const metadata: Metadata = {
 
 export default function PageRegister() {
   return (
-    <Register />
+    <Suspense fallback={<p>Carregando...</p>}>
+      <Register />
+    </Suspense>
   );
 }

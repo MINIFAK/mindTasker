@@ -1,5 +1,6 @@
 import { Metadata } from "next";
 import { Login } from "./_components/login";
+import { Suspense } from "react";
 
 export const metadata: Metadata = {
   title: 'Login',
@@ -8,6 +9,8 @@ export const metadata: Metadata = {
 
 export default function PageLogin() {
   return (
-    <Login />
+    <Suspense fallback={<p>Carregando...</p>}>
+      <Login />
+    </Suspense>
   );
 }

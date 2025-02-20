@@ -16,6 +16,7 @@ const poppins = Poppins({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://mindtasker.vercel.app/"),
   title: {
     default: "MindTasker",
     template: "%s | MindTasker",
