@@ -66,7 +66,7 @@ export function HowItWorks() {
       <h1 className="font-poppins font-semibold text-4xl lg:text-6xl text-primary-500 text-center">Como Funciona</h1>
       <div className="mt-11 w-[550px] max-w-full mx-auto px-2">
         {HowItWorks.map((step, index) => (
-          <CardAnimated step={step} index={index} delay={index * 0.4} />
+          <CardAnimated key={index} step={step} index={index} delay={index * 0.4} />
         ))}
       </div>
     </section>
